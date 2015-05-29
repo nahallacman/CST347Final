@@ -21,6 +21,7 @@
       <itemPath>include/buttondrv.h</itemPath>
       <itemPath>../FreeRTOS-Plus-CLI/FreeRTOS_CLI.h</itemPath>
       <itemPath>include/myCLICMD.h</itemPath>
+      <itemPath>include/boarddefinition.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -98,7 +99,7 @@
         <property key="additional-warnings" value="false"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="false"/>
-        <property key="enable-symbols" value="true"/>
+        <property key="enable-symbols" value="false"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
@@ -111,7 +112,7 @@
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
-        <property key="preprocessor-macros" value=""/>
+        <property key="preprocessor-macros" value="_SUPPRESS_PLIB_WARNING"/>
         <property key="strict-ansi" value="false"/>
         <property key="support-ansi" value="false"/>
         <property key="use-cci" value="false"/>

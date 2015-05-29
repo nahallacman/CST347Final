@@ -63,6 +63,7 @@
     provide a safety engineered and independently SIL3 certified version under
     the SafeRTOS brand: http://www.SafeRTOS.com.
  */
+//#define _SUPPRESS_PLIB_WARNING 1
 
 #include "myTasks.h"
 #include "leddrv.h"

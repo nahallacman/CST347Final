@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=lab06.X
+PROJECTNAME=ElevatorFinal.X
 
 # Active Configuration
 DEFAULTCONF=default
