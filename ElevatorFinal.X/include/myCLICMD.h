@@ -11,6 +11,8 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
+    
+#include "carControl.h"
 
 void myCLI_init(void);
 

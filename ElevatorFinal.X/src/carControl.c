@@ -9,7 +9,7 @@ static void taskCarControl(void *pvParameters)
 
     /* The parameter points to an xTaskParameters_t structure. */
     pxTaskParameter = (xTaskParameter_t *) pvParameters;
-
+/*
     struct LEDMessage *pxRxedMessage;
     struct LEDMessage pxAllocMessage;
     uint8_t MessageIDtest = 0;
@@ -17,6 +17,7 @@ static void taskCarControl(void *pvParameters)
     int delay = 500;
 
     pxRxedMessage = &pxAllocMessage;
+ * */
 /*
     while (1)
     {
@@ -45,6 +46,7 @@ static void taskCarControl(void *pvParameters)
         
     }
 */
+    /*
     while(1)
     {
     //no matter what, start out by toggling every 500ms
@@ -52,7 +54,37 @@ static void taskCarControl(void *pvParameters)
         //vTaskDelay(delay);
         vTaskDelay(500);
     }
-        
+     */
+    
+    
+    struct CarMessage *pxRxedMessage;
+    struct CarMessage Message2;
+    pxRxedMessage = &Message2;
+    enum ButtonPressed localButton;
+    int8_t localVelocity;
+    int8_t localAcceleration;
+    
+
+
+    while(1)
+    {
+        //UART handling code
+        if(xUARTQueue != 0) // make sure the task isn't null
+        {
+            //if( uxQueueMessagesWaiting( xUARTQueue ) != 0 ) // see if there are messages waiting
+            //{
+                if( xQueueReceive( xCarMessageQueue, ( pxRxedMessage ), portMAX_DELAY ) ) // get the messages
+                {
+                    localButton = pxRxedMessage->button;
+                    localVelocity = pxRxedMessage->Velocity;
+                    localAcceleration = pxRxedMessage->Acceleration;
+                }
+           // }
+       }
+    }  
+    
+    
+    
 }
 
 void carControlInit(void)
@@ -60,18 +92,36 @@ void carControlInit(void)
     UBaseType_t uxQueueLength = 5;
     UBaseType_t uxItemSize;
 
-    uxItemSize = sizeof(xSpeedMessage);
+    uxItemSize = sizeof(xCarMessage);
     
-    if( xSpeedQueue == NULL )
+    if( xCarMessageQueue == NULL )
     {
-    xSpeedQueue = xQueueCreate
+    xCarMessageQueue = xQueueCreate
                (
                   uxQueueLength,
                   uxItemSize
                );
     }
-
     
+    /*
+    struct CarMessage *pxTxedMessage;
+    struct CarMessage pxAllocMessage;
+    pxTxedMessage = &pxAllocMessage;
+    pxAllocMessage.button = NONE;
+    pxAllocMessage.Velocity = 5;
+    pxAllocMessage.Acceleration = 0;
+    
+    if( xQueueSendToBack(
+                       xCarMessageQueue, //QueueHandle_t xQueue,
+                       &pxAllocMessage, //const void * pvItemToQueue,
+                       0 //TickType_t xTicksToWait
+                   ) != pdPASS )
+        {
+            //task was not able to be created after the xTicksToWait
+            //a = 0;
+        }
+     */
+
     xTaskCreate(taskCarControl,
         "CarControl",
         configMINIMAL_STACK_SIZE,

@@ -17,16 +17,31 @@ extern "C" {
 #include "queue.h"
 #include "myTasks.h"
     
-struct /*__attribute__ ((packed)) */SpeedMessage
+enum ButtonPressed {
+    NONE,
+    Q,
+    W,
+    E,
+    R,
+    T,
+    Y,
+    SW1,
+    SW2,
+    SW3,
+    SW4
+};
+    
+struct /*__attribute__ ((packed)) */CarMessage
 {
     uint8_t ucMessageID;
+    enum ButtonPressed button;
     int8_t Velocity; // these need to be signed!!!
     int8_t Acceleration;
-} xSpeedMessage;
+} xCarMessage;
     
 void carControlInit(void);
 
-QueueHandle_t xSpeedQueue;
+QueueHandle_t xCarMessageQueue;
 
 TaskHandle_t xCarControlHandle;
 

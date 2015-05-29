@@ -11,13 +11,14 @@ include/FreeRTOSConfig.h  \
  ../FreeRTOS/Source/include/task.h  \
 ../FreeRTOS/Source/include/list.h  \
  include/myCLICMD.h  \
-src/myTasks.c  \
+include/carControl.h  \
+ ../FreeRTOS/Source/include/queue.h  \
 include/myTasks.h  \
 include/leddrv.h  \
  include/boarddefinition.h  \
 ../FreeRTOS/Source/include/semphr.h  \
  ../FreeRTOS/Source/include/queue.h  \
-../FreeRTOS/Source/include/queue.h  \
- include/uartdrv.h  \
-include/myTasks.h  \
-include/buttondrv.h 
+include/uartdrv.h  \
+include/buttondrv.h  \
+ src/myTasks.c  \
+include/myTasks.h 
