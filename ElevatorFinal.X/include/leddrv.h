@@ -8,6 +8,8 @@
 #ifndef LEDDRV_H
 #define	LEDDRV_H
 
+#include "boarddefinition.h"
+
 #include <peripheral/int.h>
 #include <stdint.h>
 #include <FreeRTOS.h>
