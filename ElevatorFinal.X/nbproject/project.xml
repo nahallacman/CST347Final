@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>lab06</name>
+            <name>ElevatorFinal</name>
             <creation-uuid>5c29a30e-2b09-4861-b67d-d40e5aeffe2f</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
