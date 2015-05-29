@@ -9,53 +9,6 @@ static void taskCarControl(void *pvParameters)
 
     /* The parameter points to an xTaskParameters_t structure. */
     pxTaskParameter = (xTaskParameter_t *) pvParameters;
-/*
-    struct LEDMessage *pxRxedMessage;
-    struct LEDMessage pxAllocMessage;
-    uint8_t MessageIDtest = 0;
-
-    int delay = 500;
-
-    pxRxedMessage = &pxAllocMessage;
- * */
-/*
-    while (1)
-    {
-        if(xLEDQueue[pxTaskParameter->usLEDNumber] != 0) // make sure the queue isn't null
-        {
-            if( uxQueueMessagesWaiting( xLEDQueue[pxTaskParameter->usLEDNumber] ) != 0 )
-            {
-                if( xQueueReceive( xLEDQueue[pxTaskParameter->usLEDNumber], ( &pxRxedMessage ), ( TickType_t ) 0 ) )
-                {
-                    // pcRxedMessage now points to the struct AMessage variable posted
-                    // by vATask.
-                    MessageIDtest = pxRxedMessage->ucMessageID;
-                    //led_test = pxRxedMessage->LEDNum;
-
-                    delay = pxRxedMessage->LEDDelay;
-                }
-                else
-                {
-                    //a = 0;
-                }
-            }
-        }
-        //no matter what, start out by toggling every 500ms
-        toggleLED(pxTaskParameter->usLEDNumber);
-        vTaskDelay(delay);
-        
-    }
-*/
-    /*
-    while(1)
-    {
-    //no matter what, start out by toggling every 500ms
-        toggleLED(0);
-        //vTaskDelay(delay);
-        vTaskDelay(500);
-    }
-     */
-    
     
     struct CarMessage *pxRxedMessage;
     struct CarMessage Message2;
@@ -64,8 +17,6 @@ static void taskCarControl(void *pvParameters)
     int8_t localVelocity;
     int8_t localAcceleration;
     
-
-
     while(1)
     {
         //UART handling code
@@ -82,9 +33,6 @@ static void taskCarControl(void *pvParameters)
            // }
        }
     }  
-    
-    
-    
 }
 
 void carControlInit(void)
@@ -103,25 +51,6 @@ void carControlInit(void)
                );
     }
     
-    /*
-    struct CarMessage *pxTxedMessage;
-    struct CarMessage pxAllocMessage;
-    pxTxedMessage = &pxAllocMessage;
-    pxAllocMessage.button = NONE;
-    pxAllocMessage.Velocity = 5;
-    pxAllocMessage.Acceleration = 0;
-    
-    if( xQueueSendToBack(
-                       xCarMessageQueue, //QueueHandle_t xQueue,
-                       &pxAllocMessage, //const void * pvItemToQueue,
-                       0 //TickType_t xTicksToWait
-                   ) != pdPASS )
-        {
-            //task was not able to be created after the xTicksToWait
-            //a = 0;
-        }
-     */
-
     xTaskCreate(taskCarControl,
         "CarControl",
         configMINIMAL_STACK_SIZE,

@@ -2,6 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/carControl.h</file>
+            <file>file:/D:/School/CST347Final/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/carControl.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/leddrv.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/myTasks.c</file>
+            <file>file:/D:/School/CST347Final/FreeRTOS/Source/tasks.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/myCLICMD.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/FreeRTOSConfig.h</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/main.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/myTasks.h</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/myCLICMD.h</file>
+        </group>
     </open-files>
 </project-private>
