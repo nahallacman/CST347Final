@@ -22,6 +22,7 @@
       <itemPath>../FreeRTOS-Plus-CLI/FreeRTOS_CLI.h</itemPath>
       <itemPath>include/myCLICMD.h</itemPath>
       <itemPath>include/boarddefinition.h</itemPath>
+      <itemPath>include/carControl.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -47,6 +48,7 @@
       <itemPath>src/cn_isr.S</itemPath>
       <itemPath>../FreeRTOS-Plus-CLI/FreeRTOS_CLI.c</itemPath>
       <itemPath>src/myCLICMD.c</itemPath>
+      <itemPath>src/carControl.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

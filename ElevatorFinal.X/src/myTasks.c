@@ -340,54 +340,6 @@ static void taskUARTRXControl(void *pvParameters)
                  }
              }
          }
-
-
-
-        /*
-
-        //decode the character to see if it is a simple command code
-        //if it is send a message with an LED number to the LED queue
-        switch(cByte)
-        {
-            case '1':
-                pxAllocMessage.LEDNum = 0;
-                valid_command = 1;
-                break;
-            case '2':
-                pxAllocMessage.LEDNum = 1;
-                valid_command = 1;
-                break;
-            case '3':
-                pxAllocMessage.LEDNum = 2;
-                valid_command = 1;
-                break;
-            default:
-                //do nothing and don't send the message to the LED queue
-                valid_command = 0;
-        }
-
-        if(valid_command == 1)
-        {
-            if( xQueueSendToBack(
-                   xLEDQueue, //QueueHandle_t xQueue,
-                   &pxAllocMessage, //const void * pvItemToQueue,
-                   0 //TickType_t xTicksToWait
-               ) != pdPASS )
-            {
-            //task was not able to be created after the xTicksToWait
-            //a = 0;
-            }
-        }
-
-        //suspend itself
-        vTaskSuspend(xUARTRXHandle);
-
-        //when the task is resumed, the loop should make the other code happen automatically
-         
-         */
     }
-
-
 }
-
 

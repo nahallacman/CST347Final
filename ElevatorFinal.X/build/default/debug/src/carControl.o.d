@@ -1,9 +1,9 @@
-build/default/production/src/uartdrv.o:  \
-src/uartdrv.c  \
-include/uartdrv.h  \
- ../FreeRTOS/Source/include/FreeRTOS.h  \
-include/FreeRTOSConfig.h  \
- ../FreeRTOS/Source/include/projdefs.h  \
+build/default/debug/src/carControl.o:  \
+src/carControl.c  \
+ include/carControl.h  \
+../FreeRTOS/Source/include/FreeRTOS.h  \
+ include/FreeRTOSConfig.h  \
+../FreeRTOS/Source/include/projdefs.h  \
  ../FreeRTOS/Source/include/portable.h  \
  ../FreeRTOS/Source/include/deprecated_definitions.h  \
  ../FreeRTOS/Source/portable/MPLAB/PIC32MX/portmacro.h  \

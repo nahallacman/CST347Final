@@ -49,6 +49,8 @@ typedef struct xTASK_PARAMETER {
      uint8_t ucMessageID;
      char ucMessage[50];
  } xUARTMessage;
+ 
+
 
 /* A task that toggles an LED at a fixed frequency.  This time, the LED to
 toggle and the rate at which the LED is toggled are passed into the task

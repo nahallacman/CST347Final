@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../FreeRTOS/Source/portable/MemMang/heap_2.c ../FreeRTOS/Source/list.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S ../FreeRTOS/Source/queue.c ../FreeRTOS/Source/tasks.c src/main.c src/myTasks.c src/leddrv.c src/uartdrv.c src/uart_isr.S src/buttondrv.c src/cn_isr.S ../FreeRTOS-Plus-CLI/FreeRTOS_CLI.c src/myCLICMD.c
+SOURCEFILES_QUOTED_IF_SPACED=../FreeRTOS/Source/portable/MemMang/heap_2.c ../FreeRTOS/Source/list.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S ../FreeRTOS/Source/queue.c ../FreeRTOS/Source/tasks.c src/main.c src/myTasks.c src/leddrv.c src/uartdrv.c src/uart_isr.S src/buttondrv.c src/cn_isr.S ../FreeRTOS-Plus-CLI/FreeRTOS_CLI.c src/myCLICMD.c src/carControl.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/167578668/heap_2.o ${OBJECTDIR}/_ext/381897321/list.o ${OBJECTDIR}/_ext/971107649/port.o ${OBJECTDIR}/_ext/971107649/port_asm.o ${OBJECTDIR}/_ext/381897321/queue.o ${OBJECTDIR}/_ext/381897321/tasks.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/myTasks.o ${OBJECTDIR}/src/leddrv.o ${OBJECTDIR}/src/uartdrv.o ${OBJECTDIR}/src/uart_isr.o ${OBJECTDIR}/src/buttondrv.o ${OBJECTDIR}/src/cn_isr.o ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o ${OBJECTDIR}/src/myCLICMD.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/167578668/heap_2.o.d ${OBJECTDIR}/_ext/381897321/list.o.d ${OBJECTDIR}/_ext/971107649/port.o.d ${OBJECTDIR}/_ext/971107649/port_asm.o.d ${OBJECTDIR}/_ext/381897321/queue.o.d ${OBJECTDIR}/_ext/381897321/tasks.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/myTasks.o.d ${OBJECTDIR}/src/leddrv.o.d ${OBJECTDIR}/src/uartdrv.o.d ${OBJECTDIR}/src/uart_isr.o.d ${OBJECTDIR}/src/buttondrv.o.d ${OBJECTDIR}/src/cn_isr.o.d ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o.d ${OBJECTDIR}/src/myCLICMD.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/167578668/heap_2.o ${OBJECTDIR}/_ext/381897321/list.o ${OBJECTDIR}/_ext/971107649/port.o ${OBJECTDIR}/_ext/971107649/port_asm.o ${OBJECTDIR}/_ext/381897321/queue.o ${OBJECTDIR}/_ext/381897321/tasks.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/myTasks.o ${OBJECTDIR}/src/leddrv.o ${OBJECTDIR}/src/uartdrv.o ${OBJECTDIR}/src/uart_isr.o ${OBJECTDIR}/src/buttondrv.o ${OBJECTDIR}/src/cn_isr.o ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o ${OBJECTDIR}/src/myCLICMD.o ${OBJECTDIR}/src/carControl.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/167578668/heap_2.o.d ${OBJECTDIR}/_ext/381897321/list.o.d ${OBJECTDIR}/_ext/971107649/port.o.d ${OBJECTDIR}/_ext/971107649/port_asm.o.d ${OBJECTDIR}/_ext/381897321/queue.o.d ${OBJECTDIR}/_ext/381897321/tasks.o.d ${OBJECTDIR}/src/main.o.d ${OBJECTDIR}/src/myTasks.o.d ${OBJECTDIR}/src/leddrv.o.d ${OBJECTDIR}/src/uartdrv.o.d ${OBJECTDIR}/src/uart_isr.o.d ${OBJECTDIR}/src/buttondrv.o.d ${OBJECTDIR}/src/cn_isr.o.d ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o.d ${OBJECTDIR}/src/myCLICMD.o.d ${OBJECTDIR}/src/carControl.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/167578668/heap_2.o ${OBJECTDIR}/_ext/381897321/list.o ${OBJECTDIR}/_ext/971107649/port.o ${OBJECTDIR}/_ext/971107649/port_asm.o ${OBJECTDIR}/_ext/381897321/queue.o ${OBJECTDIR}/_ext/381897321/tasks.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/myTasks.o ${OBJECTDIR}/src/leddrv.o ${OBJECTDIR}/src/uartdrv.o ${OBJECTDIR}/src/uart_isr.o ${OBJECTDIR}/src/buttondrv.o ${OBJECTDIR}/src/cn_isr.o ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o ${OBJECTDIR}/src/myCLICMD.o
+OBJECTFILES=${OBJECTDIR}/_ext/167578668/heap_2.o ${OBJECTDIR}/_ext/381897321/list.o ${OBJECTDIR}/_ext/971107649/port.o ${OBJECTDIR}/_ext/971107649/port_asm.o ${OBJECTDIR}/_ext/381897321/queue.o ${OBJECTDIR}/_ext/381897321/tasks.o ${OBJECTDIR}/src/main.o ${OBJECTDIR}/src/myTasks.o ${OBJECTDIR}/src/leddrv.o ${OBJECTDIR}/src/uartdrv.o ${OBJECTDIR}/src/uart_isr.o ${OBJECTDIR}/src/buttondrv.o ${OBJECTDIR}/src/cn_isr.o ${OBJECTDIR}/_ext/1949324057/FreeRTOS_CLI.o ${OBJECTDIR}/src/myCLICMD.o ${OBJECTDIR}/src/carControl.o
 
 # Source Files
-SOURCEFILES=../FreeRTOS/Source/portable/MemMang/heap_2.c ../FreeRTOS/Source/list.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S ../FreeRTOS/Source/queue.c ../FreeRTOS/Source/tasks.c src/main.c src/myTasks.c src/leddrv.c src/uartdrv.c src/uart_isr.S src/buttondrv.c src/cn_isr.S ../FreeRTOS-Plus-CLI/FreeRTOS_CLI.c src/myCLICMD.c
+SOURCEFILES=../FreeRTOS/Source/portable/MemMang/heap_2.c ../FreeRTOS/Source/list.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c ../FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S ../FreeRTOS/Source/queue.c ../FreeRTOS/Source/tasks.c src/main.c src/myTasks.c src/leddrv.c src/uartdrv.c src/uart_isr.S src/buttondrv.c src/cn_isr.S ../FreeRTOS-Plus-CLI/FreeRTOS_CLI.c src/myCLICMD.c src/carControl.c
 
 
 CFLAGS=
@@ -208,6 +208,12 @@ ${OBJECTDIR}/src/myCLICMD.o: src/myCLICMD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/src/myCLICMD.o 
 	@${FIXDEPS} "${OBJECTDIR}/src/myCLICMD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -I"../FreeRTOS/Source/include" -I"../FreeRTOS/Source/portable/MPLAB/PIC32MX" -I"./include" -MMD -MF "${OBJECTDIR}/src/myCLICMD.o.d" -o ${OBJECTDIR}/src/myCLICMD.o src/myCLICMD.c   
 	
+${OBJECTDIR}/src/carControl.o: src/carControl.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/src" 
+	@${RM} ${OBJECTDIR}/src/carControl.o.d 
+	@${RM} ${OBJECTDIR}/src/carControl.o 
+	@${FIXDEPS} "${OBJECTDIR}/src/carControl.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -I"../FreeRTOS/Source/include" -I"../FreeRTOS/Source/portable/MPLAB/PIC32MX" -I"./include" -MMD -MF "${OBJECTDIR}/src/carControl.o.d" -o ${OBJECTDIR}/src/carControl.o src/carControl.c   
+	
 else
 ${OBJECTDIR}/_ext/167578668/heap_2.o: ../FreeRTOS/Source/portable/MemMang/heap_2.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/167578668" 
@@ -280,6 +286,12 @@ ${OBJECTDIR}/src/myCLICMD.o: src/myCLICMD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/src/myCLICMD.o.d 
 	@${RM} ${OBJECTDIR}/src/myCLICMD.o 
 	@${FIXDEPS} "${OBJECTDIR}/src/myCLICMD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -I"../FreeRTOS/Source/include" -I"../FreeRTOS/Source/portable/MPLAB/PIC32MX" -I"./include" -MMD -MF "${OBJECTDIR}/src/myCLICMD.o.d" -o ${OBJECTDIR}/src/myCLICMD.o src/myCLICMD.c   
+	
+${OBJECTDIR}/src/carControl.o: src/carControl.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/src" 
+	@${RM} ${OBJECTDIR}/src/carControl.o.d 
+	@${RM} ${OBJECTDIR}/src/carControl.o 
+	@${FIXDEPS} "${OBJECTDIR}/src/carControl.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -D_SUPPRESS_PLIB_WARNING -I"../FreeRTOS/Source/include" -I"../FreeRTOS/Source/portable/MPLAB/PIC32MX" -I"./include" -MMD -MF "${OBJECTDIR}/src/carControl.o.d" -o ${OBJECTDIR}/src/carControl.o src/carControl.c   
 	
 endif
 

@@ -14,9 +14,10 @@ include/FreeRTOSConfig.h  \
 src/myTasks.c  \
 include/myTasks.h  \
 include/leddrv.h  \
- ../FreeRTOS/Source/include/semphr.h  \
-../FreeRTOS/Source/include/queue.h  \
+ include/boarddefinition.h  \
+../FreeRTOS/Source/include/semphr.h  \
  ../FreeRTOS/Source/include/queue.h  \
-include/uartdrv.h  \
+../FreeRTOS/Source/include/queue.h  \
+ include/uartdrv.h  \
 include/myTasks.h  \
- include/buttondrv.h 
+include/buttondrv.h 
