@@ -40,6 +40,12 @@ enum EMERGENCYSTATE {
     EMERGENCY_START,
     EMERGENCY_DONE
 };
+
+enum DIRECTION {
+    NONE,
+    UP,
+    DOWN
+};
     
 struct /*__attribute__ ((packed)) */CarMessage
 {
@@ -74,6 +80,7 @@ struct CARCONTROLINFO
     enum FLOOR TargetFloor;
     enum FLOOR LastFloor;
     int Height;
+    enum DIRECTION Direction;
 };
 
 struct CARCONTROLINFO CarInfo;

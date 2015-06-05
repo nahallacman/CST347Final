@@ -61,8 +61,14 @@ static void taskCarControl(void *pvParameters)
                             {
                                 case Q: // Keyboard ?q? ? GD Floor Call outside car
                                     //if target floor not ground floor
-                                    //  set next floor to ground floor 
-                                    //else do nothing
+                                    if(CarInfo.TargetFloor != GROUND)
+                                    {   //set next floor to ground floor
+                                        CarInfo.NextFloor = GROUND;  
+                                    }
+                                    else
+                                    {   //else set target floor to ground floor 
+                                        CarInfo.TargetFloor = GROUND;
+                                    }
                                     break;
                                 case W://Keyboard ?w? ? P1Call DN outside car
                                     break;
@@ -78,7 +84,7 @@ static void taskCarControl(void *pvParameters)
                                         CarInfo.EmergencyState = EMERGENCY_START;
                                     break;
                                 case I: //Keyboard ?i? ? Door Interference
-                                    // interrupt the door open or closing sequence. If not in either of those states, ignore.
+                                    // interrupt the door closing sequence. If not in either of those states, ignore.
                                     break;
                                 case SW1: //SW1 ? P2 Call button inside car
                                     //if elevator not moving, go to P2
@@ -133,6 +139,7 @@ static void taskCarControl(void *pvParameters)
 
 static void taskCarMotion(void *pvParameters)
 {
+    
     int SpeedUpSlowDown = 1; //if this = 1, we are speeding up, if it equals -1 we are slowing down
     int targetHeight = 0;
     while(1)
@@ -147,12 +154,25 @@ static void taskCarMotion(void *pvParameters)
                 break;
             case EMERGENCY_START: // emergency state can not be stopped!
                 //if door not closed, close the door
-                //else if traveling up, deaccelerate
-                //now try to move the car down
-                //travel to floor 0
-                CarInfo.TargetFloor = GROUND;
-                //open door
-                //then change state to EMERGENCY_DONE
+                //else if traveling up, deaccelerate to 0 and reverse
+                if(CarInfo.CurrentVelocity > 0 && CarInfo.Direction == UP )
+                {
+                    SpeedUpSlowDown = -1;
+                }
+                //when we stop moving, go the other direction as fast as possible
+                else if(CarInfo.CurrentVelocity == 0)
+                {
+                    CarInfo.TargetFloor = GROUND;
+                    //SpeedUpSlowDown = 1;
+                }
+                //open door when we get to the bottom
+                if(CarInfo.Height == targetHeight)
+                {
+                    //open door
+                    //then change state to EMERGENCY_DONE
+                    CarInfo.EmergencyState = EMERGENCY_DONE;
+                }
+                
                 break;
             case EMERGENCY_DONE:
                 //accept no input besides emergency clear
@@ -166,13 +186,18 @@ static void taskCarMotion(void *pvParameters)
         {
             case GROUND: // car is always traveling down
                 targetHeight = 0;
+                CarInfo.Direction = DOWN;
                 if(CarInfo.Height > 0 + DistanceToAccelerateToStop()) // 0 + Distance to negatively accelerate
                 {
+                    SpeedUpSlowDown = 1; //go to max speed while traveling
                     CarInfo.Height -= CarInfo.CurrentVelocity;
                 }
                 else
                 {
-                    //done moving
+                    //finish by reducing acceleration until we hit the ground floor
+                    SpeedUpSlowDown = -1;
+                    CarInfo.Height -= CarInfo.CurrentVelocity;
+                    //done moving when we hit height = 0
                 }
                 break;
             case P1:
@@ -181,6 +206,7 @@ static void taskCarMotion(void *pvParameters)
                 {
                     case GROUND:
                         //going UP
+                        CarInfo.Direction = UP;
                         if(CarInfo.Height < 500 - DistanceToAccelerateToStop()) // 500 - Distance to negatively accelerate
                         {
                             CarInfo.Height += CarInfo.CurrentVelocity;
@@ -188,7 +214,7 @@ static void taskCarMotion(void *pvParameters)
                         }
                         else
                         {
-                            //need something for reduction in acceleration to slow down for floor
+                            //finish by reducing acceleration until we hit the ground floor
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = -1;
                         }
@@ -198,13 +224,14 @@ static void taskCarMotion(void *pvParameters)
                         break;
                     case P2:
                         //going down // special case of only moving 1 floor
+                        CarInfo.Direction = DOWN;
                         if(CarInfo.Height > 505 - DistanceToAccelerateToStop()) // use negative acceleration when halfway to slow down // 505 - Distance to negatively accelerate
                         {
                             CarInfo.Height -= CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = 1;
                         }
                         else
-                        {
+                        {//finish by reducing acceleration until we hit the ground floor
                             CarInfo.Height -= CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = -1;
                         }
@@ -217,22 +244,29 @@ static void taskCarMotion(void *pvParameters)
                 {
                     case GROUND:
                         //going UP
+                        CarInfo.Direction = UP;
                         if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) //510 - Distance to negatively accelerate
                         {
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = 1;
                         }
+                        else
+                        {   //finish by reducing acceleration until we hit the ground floor
+                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            SpeedUpSlowDown = -1;
+                        }
                         //what about when the car is slowing down for the ground floor?
                         break;
                     case P1:
                         //going UP // special case of only moving 1 floor
+                        CarInfo.Direction = UP;
                         if(CarInfo.Height < 505 - DistanceToAccelerateToStop()) // 505 - Distance to negatively accelerate
                         {
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = 1;
                         }
                         else
-                        {
+                        {//finish by reducing acceleration until we hit the ground floor
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = -1;
                         }
@@ -242,6 +276,9 @@ static void taskCarMotion(void *pvParameters)
                         break;
                 }
                 break;
+            default:
+                CarInfo.Direction = NONE;
+                
         }
         
         
@@ -252,31 +289,43 @@ static void taskCarMotion(void *pvParameters)
             if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
             {
                 CarInfo.TargetFloor = CarInfo.NextFloor;
-                //targetHeight //need to decode the next floor value into a height value
+            }
+            else
+            {
+                CarInfo.TargetFloor = NO_FLOOR;
             }
             CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
             
             //go through open door process
             
+            //should wait until door closes before setting TargetFloor
+            //probably requires a state machine here
+            
         }
         
         //increase current velocity until max
-        //happens once every second 
-        if(SpeedUpSlowDown == 1)
+        //happens once every half second 
+        if(SpeedUpSlowDown == 1) //accelerating positively
         {
             if(CarInfo.CurrentVelocity < CarInfo.MaxVelocty)
             {
                 CarInfo.CurrentVelocity += (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
             }
         }
-        else
+        else //accelerating negatively to 0
         {
             if(CarInfo.CurrentVelocity > 0)
             {
                 CarInfo.CurrentVelocity -= (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
             }
+            else // you never accelerate from one direction to the other without giving a break on 0 to switch directions
+            {
+                CarInfo.CurrentVelocity = 0;
+            }
         }
 
+        
+        //all of this stuff is for the message every 500ms
         struct UARTMessage *pxRxedMessage;
         struct UARTMessage Message2;
         pxRxedMessage = &Message2;
@@ -312,7 +361,9 @@ static void taskCarMotion(void *pvParameters)
             //a = 0;
         }
         
-        //execute once every half second to make calculation easy
+        
+        
+        //execute once every half second to make calculation and output easy
         vTaskDelay(500);
     }
     
