@@ -1,6 +1,10 @@
 #include "uartdrv.h"
 
+#if (BOARDDEFINITION == 0)
+void __attribute__((interrupt(ipl0), vector(_UART2_VECTOR))) vUART1_ISR_Wrapper(void);
+#else
 void __attribute__((interrupt(ipl0), vector(_UART1_VECTOR))) vUART1_ISR_Wrapper(void);
+#endif
 
 void initUART(UART_MODULE umPortNum, uint32_t ui32WantedBaud)
 {
@@ -72,7 +76,72 @@ void initUART(UART_MODULE umPortNum, uint32_t ui32WantedBaud)
 
 }
 
+#if (BOARDDEFINITION == 0)
+void vUART1_ISR(void)
+{
+    /* Variables */
+    static portBASE_TYPE xHigherPriorityTaskWoken;
+    UART_DATA uData;
+    char cData;
 
+    // YOUR RX AND TX operations go HERE. When the ISR runs, you will need to
+    // detect if the RX or TX flag caused the interrupt. Priority should be given
+    // to the RX interrupt. That is, the RX operation code should be run and the
+    // ISR exited. Then the CPU will be interrupt again from the currently
+    // pending TX interrupt that did not get handle the last time. The interrupt
+    // flags can be checked using the plib.
+    if(INTGetFlag(INT_U2RX))
+    {
+        INTClearFlag(INT_U2RX);
+        
+        uData = UARTGetData(UART2);
+        cData = uData.__data;
+        //cData = UARTGetData(UART2);
+
+        UARTSetChar(cData);
+
+        //xSemaphoreGive( InputByteBuffer );
+        xSemaphoreGiveFromISR
+        (
+        InputByteBuffer,
+        &xHigherPriorityTaskWoken
+        );
+
+
+    }
+    else if(INTGetFlag(INT_U2TX))
+    {
+        INTClearFlag(INT_U2TX);
+
+        //string is already formatted properly,
+        //iterate through and send data
+        if(TXbuffer[TXIndex] == 0)
+        {
+            //we are done
+            //disable TX interrupt
+            INTEnable(INT_U1TX, INT_DISABLED);
+            //reset print index
+            TXIndex = 0;
+
+            xSemaphoreGiveFromISR
+            (
+            OutputStringBuffer,
+            &xHigherPriorityTaskWoken
+            );
+        }
+        else
+        {
+            //otherwise send the byte
+            UARTSendDataByte(UART2, TXbuffer[TXIndex]);
+            //increase the index
+            TXIndex++;
+        }
+    }
+
+        /* If sending or receiving necessitates a context switch, then switch now. */
+        portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+}
+#else
 void vUART1_ISR(void)
 {
     /* Variables */
@@ -89,7 +158,7 @@ void vUART1_ISR(void)
     if(INTGetFlag(INT_U1RX))
     {
         INTClearFlag(INT_U1RX);
-        
+
         uData = UARTGetData(UART1);
         cData = uData.__data;
         //cData = UARTGetData(UART1);
@@ -137,7 +206,8 @@ void vUART1_ISR(void)
         /* If sending or receiving necessitates a context switch, then switch now. */
         portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 }
- 
+#endif
+
 char UARTGetChar(void)
 {
     return UARTRXChar;
@@ -173,9 +243,9 @@ void UARTPutString(char * string)
         TXbuffer[i] = 0;
     }
     //not sure if this is necessary, going to manually trigger an interrupt too
-    INTSetFlag(INT_U1TX);
+    INTSetFlag(INT_U2TX);
     //enable the interrupt to actually send the information
-    INTEnable(INT_U1TX, INT_ENABLED);
+    INTEnable(INT_U2TX, INT_ENABLED);
 
 }
 

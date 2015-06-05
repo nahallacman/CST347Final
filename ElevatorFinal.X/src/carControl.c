@@ -1,7 +1,5 @@
 #include "carControl.h"
 
-
-
 static void taskCarControl(void *pvParameters)
 {
     xTaskParameter_t *pxTaskParameter;
@@ -57,6 +55,6 @@ void carControlInit(void)
         (void *) &xTask0Parameters,
         UARTTXTASKPRIORITY,
         &xCarControlHandle);
-   configASSERT( &xCarControlHandle );
-    
+   configASSERT( &xCarControlHandle );    
 }
+

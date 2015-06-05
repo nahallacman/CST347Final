@@ -1,5 +1,8 @@
 #include "ISR_Support.h"
 
+//We are using UART2 at KFalls campus, but the names of the functions
+//Remain UART1 for ease of exchange.
+
     .set	nomips16
 	.set 	noreorder
 

@@ -137,11 +137,12 @@ static void prvSetupHardware(void)
     ConfigCNPullups(CN15_PULLUP_ENABLE | CN16_PULLUP_ENABLE | CN19_PULLUP_ENABLE);
 
     SystemControlSetup();
-    
-    //initUART(UART2, 9600);
-    initUART(UART1, 9600);
 
-    initCN();
+    #if (BOARDDEFINITION == 0)
+        initUART(UART2, 9600);
+    #else
+        initUART(UART2, 9600);
+    #endif
 
     myCLI_init();
 

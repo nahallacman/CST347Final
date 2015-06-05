@@ -20,12 +20,10 @@ extern "C" {
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-
 #include <plib.h>
 
 #include "uartdrv.h"
-
-#include "buttondrv.h"
+#include "carControl.h"
 
 /*-----------------------------------------------------------*/
 /* Structures used by this demo.                             */
@@ -72,6 +70,7 @@ static void taskUARTRXControl(void *pvParameters);
 
 //static void vCommandConsoleTask( void *pvParameters );
 
+static void buttonTask();
 
 TaskHandle_t xLEDHandle[3];
 //TaskHandle_t xLEDHandle;
@@ -93,6 +92,7 @@ static const xTaskParameter_t xTask2Parameters = {2 /* Toggle LED3 */, (200 / po
 static const int UARTTXTASKPRIORITY = 2;
 static const int UARTRXTASKPRIORITY = 3;
 static const int LEDTASKPRIORITY = 1;
+static const int BUTTONTASKPRIORITY = 4;
 
 static const char STATICNULL = '\0';
 #ifdef	__cplusplus

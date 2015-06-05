@@ -57,6 +57,13 @@ void SystemControlSetup()
             UARTRXTASKPRIORITY,
             &xUARTRXHandle);
        configASSERT( &xUARTRXHandle );
+
+       xTaskCreate(buttonTask,
+            "BUTTON",
+            configMINIMAL_STACK_SIZE,
+            NULL,
+            BUTTONTASKPRIORITY,
+            NULL);
 }
 
 
@@ -340,6 +347,85 @@ static void taskUARTRXControl(void *pvParameters)
                  }
              }
          }
+    }
+}
+
+static void buttonTask()
+{
+    //Message to be sent to xCarMessageQueue
+    struct CarMessage message;
+
+    /*We are polling values as not all butons have CN support.
+    INT_CN and buttondrv.h and .c are not longer needed.*/
+    while(1)
+    {
+
+         //1st button - Left most 
+         if(!(mPORTDRead() & 0x40))
+         {
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+
+            if( (mPORTDRead() & 0x40) == 0)
+            {
+                //Lockout until release
+                while( (mPORTDRead() & 0x40) == 0)
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
+
+                //P1 button message
+                message.button = SW1;
+                xQueueSendToBack(xCarMessageQueue, &message, 0);
+            }
+         }
+         //2nd button
+         else if(!(mPORTDRead() & 0x80))
+         {
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+
+            if( (mPORTDRead() & 0x80) == 0)
+            {
+                //Lockout until release
+                while( (mPORTDRead() & 0x80) == 0)
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
+
+                //P2 button message
+                message.button = SW2;
+                xQueueSendToBack(xCarMessageQueue, &message, 0);
+            }
+         }
+         //3rd button
+         else if(!(mPORTARead() & 0x80))
+         {
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+
+            if( (mPORTARead() & 0x80) == 0)
+            {
+                //Lockout until release
+                while( (mPORTARead() & 0x80) == 0)
+                     vTaskDelay(10 / portTICK_PERIOD_MS);
+
+                //Door open message
+                message.button = SW3;
+                xQueueSendToBack(xCarMessageQueue, &message, 0);
+            }
+        }
+         //4th button - right most
+        else if(!(mPORTDRead() & 0x2000))
+        {
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+
+            if( (mPORTDRead() & 0x2000) == 0)
+            {
+                //Lockout until release
+                while( (mPORTDRead() & 0x2000) == 0)
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
+
+                //Door close message
+                message.button = SW4;
+                xQueueSendToBack(xCarMessageQueue, &message, 0);
+            }
+        }
+        //small delay to prevent button from triggering
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
