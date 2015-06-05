@@ -61,6 +61,7 @@ struct CarMessage pxAllocMessage;
 int8_t localVelocity = 0;
 int8_t localAccleration = 0 ;
 enum ButtonPressed localButton = NONE;
+
  int8_t *pcParameter1;
 portBASE_TYPE xParameter1StringLength;
  /* Obtain the name of the source file, and the length of its name, from
@@ -78,10 +79,10 @@ pcCommandString,
  localVelocity = atoi(pcParameter1);
  
 //check LED range
-if(localVelocity >= -20 & localVelocity <= 20)
+if(localVelocity >= -20 && localVelocity <= 20)
 {
     snprintf( pcWriteBuffer, xWriteBufferLen, "S n successfully ran\r\n\r\n" );
-    pxAllocMessage.button = localButton;
+    pxAllocMessage.button = VELOCITY;
     pxAllocMessage.Velocity = localVelocity;
     pxAllocMessage.Acceleration = localAccleration;
     
@@ -113,8 +114,12 @@ static portBASE_TYPE prvCommandAP( int8_t *pcWriteBuffer,
  size_t xWriteBufferLen,
 const int8_t *pcCommandString )
 {
+struct CarMessage pxAllocMessage;
+int8_t localVelocity = 0;
+int8_t localAccleration = 0 ;
+enum ButtonPressed localButton = NONE;
 
- int8_t *pcParameter1;
+int8_t *pcParameter1;
 portBASE_TYPE xParameter1StringLength;
  /* Obtain the name of the source file, and the length of its name, from
  the command string. The name of the source file is the first parameter. */
@@ -134,21 +139,29 @@ pcCommandString,
  so the xWriteBufferLen parameter is not used. */    
 //( void ) xWriteBufferLen;
  
-    //assign message memory
-    //pxRxedMessage2 = &pxAllocMessage;
-
- //LEDnum = atoi(pcParameter1) - 1; //adjust by 1 so D0 = LED1, D1 = LED2
- //delayLength = atoi(pcParameter2);
+localAccleration = atoi(pcParameter1);
  
-//check LED range
-//if(LEDnum >= 0 & LEDnum <= 2)
-if(1)
+//check acceleration range
+if(localAccleration >= 1 && localAccleration <= 8)
 {
     snprintf( pcWriteBuffer, xWriteBufferLen, "AP n successfully ran\r\n\r\n" );
+    pxAllocMessage.button = ACCELERATION;
+    pxAllocMessage.Velocity = localVelocity;
+    pxAllocMessage.Acceleration = localAccleration;
+    
+    if( xQueueSendToBack(
+                       xCarMessageQueue, //QueueHandle_t xQueue,
+                       &pxAllocMessage, //const void * pvItemToQueue,
+                       0 //TickType_t xTicksToWait
+                   ) != pdPASS )
+        {
+            //task was not able to be created after the xTicksToWait
+            //a = 0;
+        }
 }
 else
 {
-    snprintf( pcWriteBuffer, xWriteBufferLen, "Error invalid acceleration argument. Valid range: 1 <= n <= 8 m/s2 (? -8?)\r\n\r\n" );
+    snprintf( pcWriteBuffer, xWriteBufferLen, "Error invalid acceleration argument. Valid range: 1 <= n <= 8 m/s2\r\n\r\n" );
 }
  /* The entire table was written directly to the output buffer. Execution
  of this command is complete, so return pdFALSE. */
@@ -156,7 +169,7 @@ else
 }
 
 static const xCommandLineInput xCommandAP = {"AP",
-            "AP: acceleration \r\n Change Acceleration in ft/s2 \r\n",
+            "AP: acceleration \r\n Change Max Acceleration in ft/s2 \r\n",
             prvCommandAP,
             1};
 
@@ -165,7 +178,11 @@ static portBASE_TYPE prvCommandSF( int8_t *pcWriteBuffer,
  size_t xWriteBufferLen,
 const int8_t *pcCommandString )
 {
-
+struct CarMessage pxAllocMessage;
+int8_t localVelocity = 0;
+int8_t localAccleration = 0 ;
+enum ButtonPressed localButton = NONE;
+int8_t temp = 0;
  int8_t *pcParameter1;
 portBASE_TYPE xParameter1StringLength;
  /* Obtain the name of the source file, and the length of its name, from
@@ -189,14 +206,40 @@ pcCommandString,
     //assign message memory
     //pxRxedMessage2 = &pxAllocMessage;
 
- //LEDnum = atoi(pcParameter1) - 1; //adjust by 1 so D0 = LED1, D1 = LED2
+ temp = atoi(pcParameter1);
  //delayLength = atoi(pcParameter2);
  
 //check LED range
 //if(LEDnum >= 0 & LEDnum <= 2)
-if(1)
+if(temp == 1 || temp == 2 || temp == 3)
 {
     snprintf( pcWriteBuffer, xWriteBufferLen, "SF n successfully ran\r\n\r\n" );
+    switch(temp)
+    {
+        case 1: // Keyboard ?t? ? GD Call button inside car
+            pxAllocMessage.button = T;
+            break;
+        case 2:
+            pxAllocMessage.button = ACCELERATION;
+            break;
+        case 3:
+            pxAllocMessage.button = ACCELERATION;
+            break;
+    }
+    
+
+    pxAllocMessage.Velocity = localVelocity;
+    pxAllocMessage.Acceleration = localAccleration;
+    
+    if( xQueueSendToBack(
+                       xCarMessageQueue, //QueueHandle_t xQueue,
+                       &pxAllocMessage, //const void * pvItemToQueue,
+                       0 //TickType_t xTicksToWait
+                   ) != pdPASS )
+        {
+            //task was not able to be created after the xTicksToWait
+            //a = 0;
+        }
 }
 else
 {
