@@ -28,7 +28,9 @@ enum ButtonPressed {
     SW1,
     SW2,
     SW3,
-    SW4
+    SW4,
+    ACCELERATION,
+    VELOCITY
 };
     
 struct /*__attribute__ ((packed)) */CarMessage

@@ -138,8 +138,8 @@ static void prvSetupHardware(void)
 
     SystemControlSetup();
 
-    #if (BOARDDEFINITION == 0)
-        initUART(UART2, 9600);
+    #ifdef __BOARDDEFINITION
+        initUART(UART1, 9600);
     #else
         initUART(UART2, 9600);
     #endif
