@@ -25,6 +25,8 @@ enum ButtonPressed {
     R,
     T,
     Y,
+    U,
+    I,
     SW1,
     SW2,
     SW3,
