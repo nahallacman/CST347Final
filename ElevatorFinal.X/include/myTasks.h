@@ -93,6 +93,9 @@ static const int UARTTXTASKPRIORITY = 2;
 static const int UARTRXTASKPRIORITY = 3;
 static const int LEDTASKPRIORITY = 1;
 static const int BUTTONTASKPRIORITY = 4;
+static const int CARCONTROLPRIORITY = 2;
+static const int CARMOTIONPRIORITY = 2;
+
 
 static const char STATICNULL = '\0';
 #ifdef	__cplusplus

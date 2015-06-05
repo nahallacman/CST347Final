@@ -36,9 +36,9 @@ enum ButtonPressed {
 };
 
 enum EMERGENCYSTATE {
-    NONE,
-    EMERGENCYSTART,
-    EMERGENCYDONE
+    NO_EMERGENCY,
+    EMERGENCY_START,
+    EMERGENCY_DONE
 };
     
 struct /*__attribute__ ((packed)) */CarMessage
@@ -54,9 +54,31 @@ void carControlInit(void);
 QueueHandle_t xCarMessageQueue;
 
 TaskHandle_t xCarControlHandle;
+TaskHandle_t xCarMotionHandle;
 
-enum EMERGENCYSTATE EmergencyState;
+enum FLOOR{
+    NO_FLOOR,
+    GROUND,
+    P1,
+    P2
+};
 
+struct CARCONTROLINFO
+{
+    enum EMERGENCYSTATE EmergencyState;
+    uint8_t MaxVelocty; // = 20; //init to 20
+    int8_t CurrentVelocity;
+    uint8_t MaxAcceleration; // = 2; //init to 2
+    int8_t CurrentAcceleration;
+    enum FLOOR NextFloor;
+    enum FLOOR TargetFloor;
+    enum FLOOR LastFloor;
+    int Height;
+};
+
+struct CARCONTROLINFO CarInfo;
+
+int DistanceToAccelerateToStop();
 
 #ifdef	__cplusplus
 }
