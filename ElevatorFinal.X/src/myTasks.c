@@ -155,6 +155,22 @@ static const int8_t * const pcWelcomeMessage =
 
 static void taskUARTRXControl(void *pvParameters)
 {
+    struct CarMessage pxAllocMessage;
+    int8_t localVelocity = 0;
+    int8_t localAccleration = 0 ;
+    enum ButtonPressed localButton = NONE;
+    pxAllocMessage.Velocity = localVelocity;
+    pxAllocMessage.Acceleration = localAccleration;
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
     xTaskParameter_t *pxTaskParameter;
     portTickType xStartTime;
 
@@ -316,11 +332,111 @@ static void taskUARTRXControl(void *pvParameters)
          }
          else
          {
-             /* The if() clause performs the processing after a newline character
-             is received. This else clause performs the processing if any other
-             character is received. */
-
-             if( cRxedChar == '\r' )
+            if( cRxedChar == 'q' ) // Keyboard ?q? ? Emergency Clear inside car
+            {
+               pxAllocMessage.button = Q; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'w' ) //Keyboard ?w? ? P1Call DN outside car
+            {
+               pxAllocMessage.button = W; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'e' ) //Keyboard ?e? ? P1Call UP outside car
+            {
+                pxAllocMessage.button = E; 
+                if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'r' ) //Keyboard ?r? ? P2 Call outside car
+            {
+               pxAllocMessage.button = R; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 't' ) //Keyboard ?t? ? GD Call button inside car
+            {
+               pxAllocMessage.button = T; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'y' ) //Keyboard ?y? ? Emergency Stop inside car
+            {
+               pxAllocMessage.button = Y; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'u' ) //Keyboard ?u? ? Emergency Clear inside car
+            {
+               pxAllocMessage.button = U; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+            else if( cRxedChar == 'i' ) //Keyboard ?i? ? Door Interference
+            {
+               pxAllocMessage.button = I; 
+               if( xQueueSendToBack(
+                                  xCarMessageQueue, //QueueHandle_t xQueue,
+                                  &pxAllocMessage, //const void * pvItemToQueue,
+                                  0 //TickType_t xTicksToWait
+                              ) != pdPASS )
+                   {
+                       //task was not able to be created after the xTicksToWait
+                       //a = 0;
+                   }
+            }
+             else if( cRxedChar == '\r' )
              {
                  /* Ignore carriage returns. */
              }
