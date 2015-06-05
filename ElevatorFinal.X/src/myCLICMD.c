@@ -79,7 +79,7 @@ pcCommandString,
  localVelocity = atoi(pcParameter1);
  
 //check LED range
-if(localVelocity >= -20 && localVelocity <= 20)
+if(localVelocity >= 1 && localVelocity <= 20)
 {
     snprintf( pcWriteBuffer, xWriteBufferLen, "S n successfully ran\r\n\r\n" );
     pxAllocMessage.button = VELOCITY;
@@ -98,7 +98,7 @@ if(localVelocity >= -20 && localVelocity <= 20)
 }
 else
 {
-    snprintf( pcWriteBuffer, xWriteBufferLen, "Error invalid speed argument. Valid range: -20 <= n <= 20 m/s\r\n\r\n" );
+    snprintf( pcWriteBuffer, xWriteBufferLen, "Error invalid speed argument. Valid range: 1 <= n <= 20 m/s\r\n\r\n" );
 }
  /* The entire table was written directly to the output buffer. Execution
  of this command is complete, so return pdFALSE. */

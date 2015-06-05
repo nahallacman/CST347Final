@@ -34,6 +34,12 @@ enum ButtonPressed {
     ACCELERATION,
     VELOCITY
 };
+
+enum EMERGENCYSTATE {
+    NONE,
+    EMERGENCYSTART,
+    EMERGENCYDONE
+};
     
 struct /*__attribute__ ((packed)) */CarMessage
 {
@@ -48,6 +54,8 @@ void carControlInit(void);
 QueueHandle_t xCarMessageQueue;
 
 TaskHandle_t xCarControlHandle;
+
+enum EMERGENCYSTATE EmergencyState;
 
 
 #ifdef	__cplusplus
