@@ -256,7 +256,8 @@ static void taskCarMotion(void *pvParameters)
             case GROUND: // car is always traveling down
                 targetHeight = 0;
                 CarInfo.Direction = DOWN;
-                if(CarInfo.Height > 0 + DistanceToAccelerateToStop()) // 0 + Distance to negatively accelerate
+                if(CarInfo.Height > DistanceToAccelerateToStop()) // 0 + Distance to negatively accelerate
+                //if(CarInfo.Height > 210)
                 {
                     SpeedUpSlowDown = 1; //go to max speed while traveling
                     CarInfo.Height -= CarInfo.CurrentVelocity;
@@ -276,7 +277,8 @@ static void taskCarMotion(void *pvParameters)
                     case GROUND:
                         //going UP
                         CarInfo.Direction = UP;
-                        if(CarInfo.Height < (500 - (DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/) // 500 - Distance to negatively accelerate
+                                                //if(CarInfo.Height < 290)
+                        if(CarInfo.Height < (500 - DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/ // 500 - Distance to negatively accelerate
                         {
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = 1;
@@ -361,7 +363,7 @@ static void taskCarMotion(void *pvParameters)
                     //make sure we go back to targetHeight
                     SpeedUpSlowDown = -1;
                     CarInfo.Height -= 1;
-                    CarInfo.CurrentVelocity = 1;
+                    //CarInfo.CurrentVelocity = 1;
                 }
                 else if(CarInfo.Height == targetHeight)
                 {
@@ -392,7 +394,7 @@ static void taskCarMotion(void *pvParameters)
                     //make sure we go back to targetHeight
                     SpeedUpSlowDown = -1;
                     CarInfo.Height += 1;
-                    CarInfo.CurrentVelocity = 1;
+                    //CarInfo.CurrentVelocity = 1;
                 }
                 else if(CarInfo.Height == targetHeight)
                 {
@@ -438,6 +440,7 @@ static void taskCarMotion(void *pvParameters)
         else if(SpeedUpSlowDown == 0)
         {
             //no acceleration since we are not moving!
+            CarInfo.CurrentVelocity = 0;
         }
 
         value = CarInfo.Height;
@@ -492,7 +495,7 @@ int DistanceToAccelerateToStop()
     int ret_val = 0;
     
     numSeconds = localCurVel / localMaxAcc;
-    displacement = ((localCurVel * localCurVel) ) / 2 * localMaxAcc; // this may need to use the absolute value instead of possibly negative
+    displacement = ((localCurVel * localCurVel) ) / 2 * (localMaxAcc); // this may need to use the absolute value instead of possibly negative
     //displacement = ( localCurVel / 2 ) * ( localCurVel / localMaxAcc);
     ret_val = (int) displacement;
     return ret_val;
