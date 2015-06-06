@@ -277,30 +277,33 @@ static void taskCarMotion(void *pvParameters)
                 }
                 break;
             default:
-                CarInfo.Direction = NONE;
+                CarInfo.Direction = NO_DIRECTION;
+                SpeedUpSlowDown = 0;
                 
         }
         
-        
-        //if we reach the target floor
-        if(CarInfo.Height == targetHeight)
+        if(CarInfo.Direction != NO_DIRECTION)
         {
-            CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-            if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+            //if we reach the target floor
+            if(CarInfo.Height == targetHeight)
             {
-                CarInfo.TargetFloor = CarInfo.NextFloor;
+                CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                {
+                    CarInfo.TargetFloor = CarInfo.NextFloor;
+                }
+                else
+                {
+                    CarInfo.TargetFloor = NO_FLOOR;
+                }
+                CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+
+                //go through open door process
+
+                //should wait until door closes before setting TargetFloor
+                //probably requires a state machine here
+
             }
-            else
-            {
-                CarInfo.TargetFloor = NO_FLOOR;
-            }
-            CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-            
-            //go through open door process
-            
-            //should wait until door closes before setting TargetFloor
-            //probably requires a state machine here
-            
         }
         
         //increase current velocity until max
@@ -312,7 +315,7 @@ static void taskCarMotion(void *pvParameters)
                 CarInfo.CurrentVelocity += (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
             }
         }
-        else //accelerating negatively to 0
+        else if(SpeedUpSlowDown == -1) //accelerating negatively to 0
         {
             if(CarInfo.CurrentVelocity > 0)
             {
@@ -323,6 +326,10 @@ static void taskCarMotion(void *pvParameters)
                 CarInfo.CurrentVelocity = 0;
             }
         }
+        else if(SpeedUpSlowDown == 0)
+        {
+            //no acceleration since we are not moving!
+        }
 
         
         //all of this stuff is for the message every 500ms
@@ -330,26 +337,36 @@ static void taskCarMotion(void *pvParameters)
         struct UARTMessage Message2;
         pxRxedMessage = &Message2;
         int j = 0;
+        int k = 0;
+        int length = 0;
+        int length2 = 0;
         char test;
-        char str1 [1000];
-        int value = CarInfo.CurrentVelocity;
+        char str1 [3];
+        char str2 [3];
+        static const char mFeet[] = " Feet ";
+        static const char mMS[] = " m/s\r\n\0\0";
+        int value = CarInfo.Height;
+        int value2 = CarInfo.CurrentVelocity;
         //SEND UPDATE DISTANCE MESSAGE HERE
-        //itoa(value, str1, 10); //this crashes the system, not sure why
-        Message2.ucMessage[0] = '1'; //?n Feet :: m ft/s?
-        Message2.ucMessage[1] = ' ';
-        Message2.ucMessage[2] = 'F';
-        Message2.ucMessage[3] = 'e';
-        Message2.ucMessage[4] = 'e';
-        Message2.ucMessage[5] = 't';
-        Message2.ucMessage[6] = ' ';
-        Message2.ucMessage[7] = '1';
-        Message2.ucMessage[8] = ' ';
-        Message2.ucMessage[9] = 'm';
-        Message2.ucMessage[10] = '/';
-        Message2.ucMessage[11] = 's';
-        Message2.ucMessage[11] = '\r';
-        Message2.ucMessage[11] = '\n';
-        Message2.ucMessage[12] = '\0';
+        itoa(str1, value, 10); //this crashes the system, not sure why
+        itoa(str2, value2, 10);
+        for(length = 0; str1[length] != 0; length++)//strlen()
+        {
+            Message2.ucMessage[length] = str1[length];
+        }
+        for(j = length; j < length + 6; j++)
+        {
+            Message2.ucMessage[j] = mFeet[j - length];
+        }
+        for(length2 = j ; str2[length2 - j] != 0; length2++)
+        {
+            Message2.ucMessage[length2] = str2[length2 - j];
+        }
+        for(k = length2; k < length2 + 7; k++)
+        {
+            Message2.ucMessage[k] = mMS[k - length2];
+        }       
+
         
         if( xQueueSendToBack(
                xUARTQueue, //QueueHandle_t xQueue,
@@ -421,7 +438,7 @@ void carControlInit(void)
    CarInfo.TargetFloor = NO_FLOOR; // use this as the next floor to go to
    CarInfo.NextFloor = NO_FLOOR; // use this as a secondary floor to go to AFTER going to target floor. May be unnecessary
    CarInfo.MaxAcceleration = 2;
-   CarInfo.CurrentAcceleration = 0;
+   //CarInfo.CurrentAcceleration = 0;
    CarInfo.MaxVelocty = 20;
    CarInfo.CurrentVelocity = 0;
    CarInfo.Height = 0;

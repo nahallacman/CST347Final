@@ -42,7 +42,7 @@ enum EMERGENCYSTATE {
 };
 
 enum DIRECTION {
-    NONE,
+    NO_DIRECTION,
     UP,
     DOWN
 };
@@ -75,7 +75,7 @@ struct CARCONTROLINFO
     uint8_t MaxVelocty; // = 20; //init to 20
     int8_t CurrentVelocity;
     uint8_t MaxAcceleration; // = 2; //init to 2
-    int8_t CurrentAcceleration;
+    //int8_t CurrentAcceleration;
     enum FLOOR NextFloor;
     enum FLOOR TargetFloor;
     enum FLOOR LastFloor;
