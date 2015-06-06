@@ -60,17 +60,21 @@ static void taskCarControl(void *pvParameters)
                             switch(localButton)
                             {
                                 case Q: // Keyboard ?q? ? GD Floor Call outside car
-                                    //if target floor not ground floor
-                                    if(CarInfo.TargetFloor != GROUND)
-                                    {   //set next floor to ground floor
-                                        CarInfo.NextFloor = GROUND;  
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = GROUND;  
                                     }
-                                    else
-                                    {   //else set target floor to ground floor 
-                                        CarInfo.TargetFloor = GROUND;
+                                    else if(CarInfo.TargetFloor != GROUND) //if target floor set
+                                    {   //set next floor to ground
+                                        CarInfo.NextFloor = GROUND;
                                     }
                                     break;
                                 case W://Keyboard ?w? ? P1Call DN outside car
+                                    if(CarInfo.TargetFloor != P1)
+                                    {
+                                        CarInfo.TargetFloor = P1;
+                                    }
                                     break;
                                 case E://Keyboard ?e? ? P1Call UP outside car
                                     break;
@@ -139,6 +143,24 @@ static void taskCarControl(void *pvParameters)
 
 static void taskCarMotion(void *pvParameters)
 {
+    //---- variables for update every 500ms -----
+    //all of this stuff is for the message every 500ms
+        struct UARTMessage *pxRxedMessage;
+        struct UARTMessage Message2;
+        pxRxedMessage = &Message2;
+        int j = 0;
+        int k = 0;
+        int length = 0;
+        int length2 = 0;
+        char test;
+        char str1 [3];
+        char str2 [3];
+        static const char mFeet[] = " Feet ";
+        static const char mMS[] = " m/s\r\n\0\0";
+        int value = CarInfo.Height;
+        int value2 = CarInfo.CurrentVelocity;
+    
+    //---- end variables for update every 500ms -----
     
     int SpeedUpSlowDown = 1; //if this = 1, we are speeding up, if it equals -1 we are slowing down
     int targetHeight = 0;
@@ -284,25 +306,64 @@ static void taskCarMotion(void *pvParameters)
         
         if(CarInfo.Direction != NO_DIRECTION)
         {
-            //if we reach the target floor
-            if(CarInfo.Height == targetHeight)
+            if(CarInfo.Direction == UP)
             {
-                CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-                if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                if(CarInfo.Height > targetHeight)
                 {
-                    CarInfo.TargetFloor = CarInfo.NextFloor;
+                    //we overshot!
+                    //make sure we go back to targetHeight
+                    SpeedUpSlowDown = -1;
+                    CarInfo.Height -= 1;
+                    //CarInfo.CurrentVelocity = 1;
                 }
-                else
+                else if(CarInfo.Height == targetHeight)
                 {
-                    CarInfo.TargetFloor = NO_FLOOR;
+                    SpeedUpSlowDown = 0;
+                    CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                    if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                    {
+                        CarInfo.TargetFloor = CarInfo.NextFloor;
+                    }
+                    else
+                    {
+                        CarInfo.TargetFloor = NO_FLOOR;
+                    }
+                    CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+
+                    //go through open door process
+
+                    //should wait until door closes before setting TargetFloor
+                    //probably requires a state machine here
                 }
-                CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+            }
+            else if(CarInfo.Direction == DOWN)
+            {
+                if(CarInfo.Height < targetHeight)
+                {
+                    //we overshot!
+                    //make sure we go back to targetHeight
+                    //make sure we go back to targetHeight
+                    SpeedUpSlowDown = -1;
+                    CarInfo.Height += 1;
+                }
+                else if(CarInfo.Height == targetHeight)
+                {
+                    CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                    if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                    {
+                        CarInfo.TargetFloor = CarInfo.NextFloor;
+                    }
+                    else
+                    {
+                        CarInfo.TargetFloor = NO_FLOOR;
+                    }
+                    CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
 
-                //go through open door process
+                    //go through open door process
 
-                //should wait until door closes before setting TargetFloor
-                //probably requires a state machine here
-
+                    //should wait until door closes before setting TargetFloor
+                    //probably requires a state machine here
+                }
             }
         }
         
@@ -331,24 +392,10 @@ static void taskCarMotion(void *pvParameters)
             //no acceleration since we are not moving!
         }
 
-        
-        //all of this stuff is for the message every 500ms
-        struct UARTMessage *pxRxedMessage;
-        struct UARTMessage Message2;
-        pxRxedMessage = &Message2;
-        int j = 0;
-        int k = 0;
-        int length = 0;
-        int length2 = 0;
-        char test;
-        char str1 [3];
-        char str2 [3];
-        static const char mFeet[] = " Feet ";
-        static const char mMS[] = " m/s\r\n\0\0";
-        int value = CarInfo.Height;
-        int value2 = CarInfo.CurrentVelocity;
+        value = CarInfo.Height;
+        value2 = CarInfo.CurrentVelocity;
         //SEND UPDATE DISTANCE MESSAGE HERE
-        itoa(str1, value, 10); //this crashes the system, not sure why
+        itoa(str1, value, 10); 
         itoa(str2, value2, 10);
         for(length = 0; str1[length] != 0; length++)//strlen()
         {
@@ -396,7 +443,7 @@ int DistanceToAccelerateToStop()
     int avg_speed = 0;
     
     numSeconds = localCurVel / localMaxAcc;
-    displacement = ( 0 - (localCurVel * localCurVel) ) / 2 * localMaxAcc; // this may need to use the absolute value instead of possibly negative
+    displacement = ((localCurVel * localCurVel) ) / 2 * localMaxAcc; // this may need to use the absolute value instead of possibly negative
     return displacement;
 }
 
