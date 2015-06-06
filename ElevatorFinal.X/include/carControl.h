@@ -83,6 +83,20 @@ struct CARCONTROLINFO
     enum DIRECTION Direction;
 };
 
+//struct CARCONTROLINFO
+//{
+//    enum EMERGENCYSTATE EmergencyState;
+//    float MaxVelocty; // = 20; //init to 20
+//    float CurrentVelocity;
+//    float MaxAcceleration; // = 2; //init to 2
+//    //int8_t CurrentAcceleration;
+//    enum FLOOR NextFloor;
+//    enum FLOOR TargetFloor;
+//    enum FLOOR LastFloor;
+//    float Height;
+//    enum DIRECTION Direction;
+//};
+
 struct CARCONTROLINFO CarInfo;
 
 int DistanceToAccelerateToStop();

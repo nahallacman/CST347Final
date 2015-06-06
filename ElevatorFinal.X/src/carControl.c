@@ -260,13 +260,13 @@ static void taskCarMotion(void *pvParameters)
                 //if(CarInfo.Height > 210)
                 {
                     SpeedUpSlowDown = 1; //go to max speed while traveling
-                    CarInfo.Height -= CarInfo.CurrentVelocity;
+                    CarInfo.Height -= CarInfo.CurrentVelocity / 2;
                 }
                 else
                 {
                     //finish by reducing acceleration until we hit the ground floor
                     SpeedUpSlowDown = -1;
-                    CarInfo.Height -= CarInfo.CurrentVelocity;
+                    CarInfo.Height -= CarInfo.CurrentVelocity / 2;
                     //done moving when we hit height = 0
                 }
                 break;
@@ -280,13 +280,13 @@ static void taskCarMotion(void *pvParameters)
                                                 //if(CarInfo.Height < 290)
                         if(CarInfo.Height < (500 - DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/ // 500 - Distance to negatively accelerate
                         {
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = 1;
                         }
                         else
                         {
                             //finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = -1;
                         }
                         break;
@@ -296,14 +296,14 @@ static void taskCarMotion(void *pvParameters)
                     case P2:
                         //going down // special case of only moving 1 floor
                         CarInfo.Direction = DOWN;
-                        if(CarInfo.Height > 505 - DistanceToAccelerateToStop()) // use negative acceleration when halfway to slow down // 505 - Distance to negatively accelerate
+                        if(CarInfo.Height > ( 500 + DistanceToAccelerateToStop())) // use negative acceleration when halfway to slow down // 505 - Distance to negatively accelerate
                         {
-                            CarInfo.Height -= CarInfo.CurrentVelocity;
+                            CarInfo.Height -= CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = 1;
                         }
                         else
                         {//finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height -= CarInfo.CurrentVelocity;
+                            CarInfo.Height -= CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = -1;
                         }
                         break;
@@ -318,12 +318,12 @@ static void taskCarMotion(void *pvParameters)
                         CarInfo.Direction = UP;
                         if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) //510 - Distance to negatively accelerate
                         {
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = 1;
                         }
                         else
                         {   //finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = -1;
                         }
                         //what about when the car is slowing down for the ground floor?
@@ -331,14 +331,14 @@ static void taskCarMotion(void *pvParameters)
                     case P1:
                         //going UP // special case of only moving 1 floor
                         CarInfo.Direction = UP;
-                        if(CarInfo.Height < 505 - DistanceToAccelerateToStop()) // 505 - Distance to negatively accelerate
+                        if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) // 505 - Distance to negatively accelerate
                         {
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = 1;
                         }
                         else
                         {//finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity;
+                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
                             SpeedUpSlowDown = -1;
                         }
                         break;
@@ -495,7 +495,7 @@ int DistanceToAccelerateToStop()
     int ret_val = 0;
     
     numSeconds = localCurVel / localMaxAcc;
-    displacement = ((localCurVel * localCurVel) ) / 2 * (localMaxAcc); // this may need to use the absolute value instead of possibly negative
+    displacement = (((localCurVel /2)  * (localCurVel/2)) ) / 2 * (localMaxAcc); // this may need to use the absolute value instead of possibly negative
     //displacement = ( localCurVel / 2 ) * ( localCurVel / localMaxAcc);
     ret_val = (int) displacement;
     return ret_val;
