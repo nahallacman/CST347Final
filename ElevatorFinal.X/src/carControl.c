@@ -71,16 +71,48 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case W://Keyboard ?w? ? P1Call DN outside car
-                                    if(CarInfo.TargetFloor != P1)
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = P1;  
+                                    }
+                                    else if(CarInfo.TargetFloor != P1)
                                     {
-                                        CarInfo.TargetFloor = P1;
+                                        CarInfo.NextFloor = P1;
                                     }
                                     break;
                                 case E://Keyboard ?e? ? P1Call UP outside car
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = P1;  
+                                    }
+                                    else if(CarInfo.TargetFloor != P1)
+                                    {
+                                        CarInfo.NextFloor = P1;
+                                    }
                                     break;
                                 case R: //Keyboard ?r? ? P2 Call outside car
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = P2;  
+                                    }
+                                    else if(CarInfo.TargetFloor != P2)
+                                    {
+                                        CarInfo.NextFloor = P2;
+                                    }
                                     break;
                                 case T: //Keyboard ?t? ? GD Call button inside car
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = GROUND;  
+                                    }
+                                    else if(CarInfo.TargetFloor != GROUND) //if target floor set
+                                    {   //set next floor to ground
+                                        CarInfo.NextFloor = GROUND;
+                                    }
                                     break;
                                 case Y: //Keyboard ?y? ? Emergency Stop inside car
                                     //START THE EMERGENCY!
@@ -88,13 +120,28 @@ static void taskCarControl(void *pvParameters)
                                         CarInfo.EmergencyState = EMERGENCY_START;
                                     break;
                                 case I: //Keyboard ?i? ? Door Interference
-                                    // interrupt the door closing sequence. If not in either of those states, ignore.
+                                    // interrupt the door closing sequence. If not in either of those states, error? ignore for now
                                     break;
                                 case SW1: //SW1 ? P2 Call button inside car
-                                    //if elevator not moving, go to P2
-                                    //else ??
+                                    //if target floor not set
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = P2;  
+                                    }
+                                    else if(CarInfo.TargetFloor != P2)
+                                    {
+                                        CarInfo.NextFloor = P2;
+                                    }
                                     break;
                                 case SW2: //SW2 ? P1 Call button inside car
+                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    {   //set target floor to ground floor
+                                        CarInfo.TargetFloor = P1;  
+                                    }
+                                    else if(CarInfo.TargetFloor != P1)
+                                    {
+                                        CarInfo.NextFloor = P1;
+                                    }
                                     //if elevator not moving, go to P1
                                     //else ??
                                     break;
@@ -123,7 +170,7 @@ static void taskCarControl(void *pvParameters)
                             //open door
                             //then change state to EMERGENCYDONE
                             
-                            //since we are in the consumer portion, do nothing
+                            //since we are in the consumer portion, do no actual code here, this is just a placeholder for notes
                             break;
                         case EMERGENCY_DONE: //once the emergency procedure is complete, wait for the reset button to be pressed
                             //accept no input besides emergency clear
@@ -156,7 +203,7 @@ static void taskCarMotion(void *pvParameters)
         char str1 [3];
         char str2 [3];
         static const char mFeet[] = " Feet ";
-        static const char mMS[] = " m/s\r\n\0\0";
+        static const char mMS[] = " ft/s\r\n\0\0";
         int value = CarInfo.Height;
         int value2 = CarInfo.CurrentVelocity;
     
@@ -229,7 +276,7 @@ static void taskCarMotion(void *pvParameters)
                     case GROUND:
                         //going UP
                         CarInfo.Direction = UP;
-                        if(CarInfo.Height < 500 - DistanceToAccelerateToStop()) // 500 - Distance to negatively accelerate
+                        if(CarInfo.Height < (500 - (DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/) // 500 - Distance to negatively accelerate
                         {
                             CarInfo.Height += CarInfo.CurrentVelocity;
                             SpeedUpSlowDown = 1;
@@ -304,7 +351,7 @@ static void taskCarMotion(void *pvParameters)
                 
         }
         
-        if(CarInfo.Direction != NO_DIRECTION)
+        if(CarInfo.Direction != NO_DIRECTION) // no height comparisons if we are not moving
         {
             if(CarInfo.Direction == UP)
             {
@@ -314,7 +361,7 @@ static void taskCarMotion(void *pvParameters)
                     //make sure we go back to targetHeight
                     SpeedUpSlowDown = -1;
                     CarInfo.Height -= 1;
-                    //CarInfo.CurrentVelocity = 1;
+                    CarInfo.CurrentVelocity = 1;
                 }
                 else if(CarInfo.Height == targetHeight)
                 {
@@ -345,6 +392,7 @@ static void taskCarMotion(void *pvParameters)
                     //make sure we go back to targetHeight
                     SpeedUpSlowDown = -1;
                     CarInfo.Height += 1;
+                    CarInfo.CurrentVelocity = 1;
                 }
                 else if(CarInfo.Height == targetHeight)
                 {
@@ -409,7 +457,7 @@ static void taskCarMotion(void *pvParameters)
         {
             Message2.ucMessage[length2] = str2[length2 - j];
         }
-        for(k = length2; k < length2 + 7; k++)
+        for(k = length2; k < length2 + 8; k++)
         {
             Message2.ucMessage[k] = mMS[k - length2];
         }       
@@ -436,15 +484,18 @@ static void taskCarMotion(void *pvParameters)
 
 int DistanceToAccelerateToStop()
 {
-    int localCurVel = CarInfo.CurrentVelocity;
-    int localMaxAcc = CarInfo.MaxAcceleration;
+    float localCurVel = CarInfo.CurrentVelocity;
+    float localMaxAcc = CarInfo.MaxAcceleration;
     int numSeconds = 0;
-    int displacement = 0;
+    float displacement = 0;
     int avg_speed = 0;
+    int ret_val = 0;
     
     numSeconds = localCurVel / localMaxAcc;
     displacement = ((localCurVel * localCurVel) ) / 2 * localMaxAcc; // this may need to use the absolute value instead of possibly negative
-    return displacement;
+    //displacement = ( localCurVel / 2 ) * ( localCurVel / localMaxAcc);
+    ret_val = (int) displacement;
+    return ret_val;
 }
 
 void carControlInit(void)
