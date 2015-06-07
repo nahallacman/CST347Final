@@ -311,201 +311,205 @@ static void taskCarMotion(void *pvParameters)
         //takes a target floor, and a last floor, and moves from the last floor to the target floor
         if(doorState == 0)
         {
-        switch(CarInfo.TargetFloor)
-        {
-            case GROUND: // car is always traveling down
-                targetHeight = 0;
-                CarInfo.Direction = DOWN;
-                if(CarInfo.Height > DistanceToAccelerateToStop()) // 0 + Distance to negatively accelerate
-                //if(CarInfo.Height > 210)
-                {
-                    SpeedUpSlowDown = 1; //go to max speed while traveling
-                    CarInfo.Height -= CarInfo.CurrentVelocity / 2;
-                }
-                else
-                {
-                    //finish by reducing acceleration until we hit the ground floor
-                    SpeedUpSlowDown = -1;
-                    CarInfo.Height -= CarInfo.CurrentVelocity / 2;
-                    //done moving when we hit height = 0
-                }
-                break;
-            case P1:
-                targetHeight = 500;
-                switch(CarInfo.LastFloor)
-                {
-                    case GROUND:
-                        //going UP
-                        CarInfo.Direction = UP;
-                                                //if(CarInfo.Height < 290)
-                        if(CarInfo.Height < (500 - DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/ // 500 - Distance to negatively accelerate
-                        {
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = 1;
-                        }
-                        else
-                        {
-                            //finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = -1;
-                        }
-                        break;
-                    case P1:
-                        //error
-                        break;
-                    case P2:
-                        //going down // special case of only moving 1 floor
-                        CarInfo.Direction = DOWN;
-                        if(CarInfo.Height > ( 500 + DistanceToAccelerateToStop())) // use negative acceleration when halfway to slow down // 505 - Distance to negatively accelerate
-                        {
-                            CarInfo.Height -= CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = 1;
-                        }
-                        else
-                        {//finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height -= CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = -1;
-                        }
-                        break;
-                }
-                break;
-            case P2:
-                targetHeight = 510;
-                switch(CarInfo.LastFloor)
-                {
-                    case GROUND:
-                        //going UP
-                        CarInfo.Direction = UP;
-                        if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) //510 - Distance to negatively accelerate
-                        {
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = 1;
-                        }
-                        else
-                        {   //finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = -1;
-                        }
-                        //what about when the car is slowing down for the ground floor?
-                        break;
-                    case P1:
-                        //going UP // special case of only moving 1 floor
-                        CarInfo.Direction = UP;
-                        if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) // 505 - Distance to negatively accelerate
-                        {
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = 1;
-                        }
-                        else
-                        {//finish by reducing acceleration until we hit the ground floor
-                            CarInfo.Height += CarInfo.CurrentVelocity / 2;
-                            SpeedUpSlowDown = -1;
-                        }
-                        break;
-                    case P2:
-                        //error, last floor and target floor are equal
-                        break;
-                }
-                break;
-            default:
-                CarInfo.Direction = NO_DIRECTION;
-                SpeedUpSlowDown = 0;
-                
-        }
-        
-        if(CarInfo.Direction != NO_DIRECTION) // no height comparisons if we are not moving
-        {
-            if(CarInfo.Direction == UP)
+            switch(CarInfo.TargetFloor)
             {
-                setLED(6,1);
-                if(CarInfo.Height > targetHeight)
-                {
-                    //we overshot!
-                    //make sure we go back to targetHeight
-                    SpeedUpSlowDown = -1;
-                    CarInfo.Height -= 1;
-                    //CarInfo.CurrentVelocity = 1;
-                }
-                else if(CarInfo.Height == targetHeight)
-                {
+                case GROUND: // car is always traveling down
+                    targetHeight = 0;
+                    CarInfo.Direction = DOWN;
+                    if(CarInfo.Height > DistanceToAccelerateToStop()) // 0 + Distance to negatively accelerate
+                    //if(CarInfo.Height > 210)
+                    {
+                        SpeedUpSlowDown = 1; //go to max speed while traveling
+                        CarInfo.Height -= CarInfo.CurrentVelocity / 2;
+                    }
+                    else
+                    {
+                        //finish by reducing acceleration until we hit the ground floor
+                        SpeedUpSlowDown = -1;
+                        CarInfo.Height -= CarInfo.CurrentVelocity / 2;
+                        //done moving when we hit height = 0
+                    }
+                    break;
+                case P1:
+                    targetHeight = 500;
+                    switch(CarInfo.LastFloor)
+                    {
+                        case GROUND:
+                            //going UP
+                            CarInfo.Direction = UP;
+                                                    //if(CarInfo.Height < 290)
+                            if(CarInfo.Height < (500 - DistanceToAccelerateToStop())) /*&& !(SpeedUpSlowDown == -1)*/ // 500 - Distance to negatively accelerate
+                            {
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = 1;
+                            }
+                            else
+                            {
+                                //finish by reducing acceleration until we hit the ground floor
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = -1;
+                            }
+                            break;
+                        case P1:
+                            //error
+                            break;
+                        case P2:
+                            //going down // special case of only moving 1 floor
+                            CarInfo.Direction = DOWN;
+                            if(CarInfo.Height > ( 500 + DistanceToAccelerateToStop())) // use negative acceleration when halfway to slow down // 505 - Distance to negatively accelerate
+                            {
+                                CarInfo.Height -= CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = 1;
+                            }
+                            else
+                            {//finish by reducing acceleration until we hit the ground floor
+                                CarInfo.Height -= CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = -1;
+                            }
+                            break;
+                    }
+                    break;
+                case P2:
+                    targetHeight = 510;
+                    switch(CarInfo.LastFloor)
+                    {
+                        case GROUND:
+                            //going UP
+                            CarInfo.Direction = UP;
+                            if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) //510 - Distance to negatively accelerate
+                            {
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = 1;
+                            }
+                            else
+                            {   //finish by reducing acceleration until we hit the ground floor
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = -1;
+                            }
+                            //what about when the car is slowing down for the ground floor?
+                            break;
+                        case P1:
+                            //going UP // special case of only moving 1 floor
+                            CarInfo.Direction = UP;
+                            if(CarInfo.Height < 510 - DistanceToAccelerateToStop()) // 505 - Distance to negatively accelerate
+                            {
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = 1;
+                            }
+                            else
+                            {//finish by reducing acceleration until we hit the ground floor
+                                CarInfo.Height += CarInfo.CurrentVelocity / 2;
+                                SpeedUpSlowDown = -1;
+                            }
+                            break;
+                        case P2:
+                            //error, last floor and target floor are equal
+                            break;
+                    }
+                    break;
+                default:
+                    CarInfo.Direction = NO_DIRECTION;
                     SpeedUpSlowDown = 0;
-                    CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-                    if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
-                    {
-                        CarInfo.TargetFloor = CarInfo.NextFloor;
-                    }
-                    else
-                    {
-                        CarInfo.TargetFloor = NO_FLOOR;
-                    }
-                    CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                    setLED(6,0);
-                    
-                    //go through open door process
-                    openDoor = 1;
-                    
 
-                    //should wait until door closes before setting TargetFloor
-                    //probably requires a state machine here
-                }
             }
-            else if(CarInfo.Direction == DOWN)
+
+            if(CarInfo.Direction != NO_DIRECTION) // no height comparisons if we are not moving
             {
-                setLED(5,1);
-                if(CarInfo.Height < targetHeight)
+                if(CarInfo.Direction == UP)
                 {
-                    //we overshot!
-                    //make sure we go back to targetHeight
-                    //make sure we go back to targetHeight
-                    SpeedUpSlowDown = -1;
-                    CarInfo.Height += 1;
-                    //CarInfo.CurrentVelocity = 1;
+                    setLED(6,1);
+                    if(CarInfo.Height > targetHeight)
+                    {
+                        //we overshot!
+                        //make sure we go back to targetHeight
+                        SpeedUpSlowDown = -1;
+                        CarInfo.Height -= 1;
+                        //CarInfo.CurrentVelocity = 1;
+                    }
+                    else if(CarInfo.Height == targetHeight)
+                    {
+                        SpeedUpSlowDown = 0;
+                        CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                        if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                        {
+                            CarInfo.TargetFloor = CarInfo.NextFloor;
+                        }
+                        else
+                        {
+                            CarInfo.TargetFloor = NO_FLOOR;
+                        }
+                        CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                        setLED(6,0);
+
+                        //go through open door process
+                        openDoor = 1;
+
+
+                        //should wait until door closes before setting TargetFloor
+                        //probably requires a state machine here
+                    }
                 }
-                else if(CarInfo.Height == targetHeight)
+                else if(CarInfo.Direction == DOWN)
                 {
-                    CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-                    if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                    setLED(5,1);
+                    if(CarInfo.Height < targetHeight)
                     {
-                        CarInfo.TargetFloor = CarInfo.NextFloor;
+                        //we overshot!
+                        //make sure we go back to targetHeight
+                        //make sure we go back to targetHeight
+                        SpeedUpSlowDown = -1;
+                        CarInfo.Height += 1;
+                        //CarInfo.CurrentVelocity = 1;
                     }
-                    else
+                    else if(CarInfo.Height == targetHeight)
                     {
-                        CarInfo.TargetFloor = NO_FLOOR;
+                        CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                        if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                        {
+                            CarInfo.TargetFloor = CarInfo.NextFloor;
+                        }
+                        else
+                        {
+                            CarInfo.TargetFloor = NO_FLOOR;
+                        }
+                        CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                        setLED(5,0);
+
+                        //go through open door process
+                        openDoor = 1;
                     }
-                    CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                    setLED(5,0);
-                    
-                    //go through open door process
-                    openDoor = 1;
                 }
             }
-        }
-        
-        //increase current velocity until max
-        //happens once every half second 
-        if(SpeedUpSlowDown == 1) //accelerating positively
-        {
-            if(CarInfo.CurrentVelocity < CarInfo.MaxVelocty)
+
+            //increase current velocity until max
+            //happens once every half second 
+            if(SpeedUpSlowDown == 1) //accelerating positively
             {
-                CarInfo.CurrentVelocity += (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
+                if(CarInfo.CurrentVelocity < CarInfo.MaxVelocty)
+                {
+                    CarInfo.CurrentVelocity += (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
+                }
             }
-        }
-        else if(SpeedUpSlowDown == -1) //accelerating negatively to 0
-        {
-            if(CarInfo.CurrentVelocity > 0)
+            else if(SpeedUpSlowDown == -1) //accelerating negatively to 0
             {
-                CarInfo.CurrentVelocity -= (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
+                if(CarInfo.CurrentVelocity > 0)
+                {
+                    CarInfo.CurrentVelocity -= (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
+                }
+                else // you never accelerate from one direction to the other without giving a break on 0 to switch directions
+                {
+                    CarInfo.CurrentVelocity = 0;
+                }
             }
-            else // you never accelerate from one direction to the other without giving a break on 0 to switch directions
+            else if(SpeedUpSlowDown == 0)
             {
+                //no acceleration since we are not moving!
                 CarInfo.CurrentVelocity = 0;
             }
         }
-        else if(SpeedUpSlowDown == 0)
+        else // the door is open so make sure we don't have any velocity!
         {
-            //no acceleration since we are not moving!
             CarInfo.CurrentVelocity = 0;
-        }
         }
         value = CarInfo.Height;
         value2 = CarInfo.CurrentVelocity;
