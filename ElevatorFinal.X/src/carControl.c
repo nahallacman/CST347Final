@@ -285,13 +285,21 @@ static void taskCarMotion(void *pvParameters)
                     doorState = 2;
                     break;
                case 2:
-                    toggleLED(0);
-                    doorState = 3;
+                    setLED(0, 0);
+                    //toggleLED(0);
+                    
 
-                    //Do not start closing unles there is no emergency
+                    //Do not start closing unless there is no emergency
                     //Currently doesn't work because how emergency functions.
-                    if(CarInfo.EmergencyState == NO_EMERGENCY)
+                    if(CarInfo.EmergencyState == EMERGENCY_DONE)
+                    {
+                        doorState = 3;
                         openDoor = 0;
+                    }
+                    else
+                    {
+                        doorState = 2;
+                    }
                     break;
             }
         }
@@ -332,6 +340,8 @@ static void taskCarMotion(void *pvParameters)
                 break;
             case EMERGENCY_START: // emergency state can not be stopped!
                 openDoor = 0;
+                CarInfo.TargetFloor = GROUND;
+                CarInfo.NextFloor = NO_FLOOR; // make sure no floors can be queued up while we are going to ground.
                 //else if traveling up, deaccelerate to 0 and reverse
                 if(CarInfo.CurrentVelocity > 0 && CarInfo.Direction == UP )
                 {
@@ -340,8 +350,8 @@ static void taskCarMotion(void *pvParameters)
                 //when we stop moving, go the other direction as fast as possible
                 else if(CarInfo.CurrentVelocity == 0)
                 {
-                    CarInfo.TargetFloor = GROUND;
-                    //SpeedUpSlowDown = 1;
+                    //CarInfo.TargetFloor = GROUND;
+                    SpeedUpSlowDown = 1;
                 }
                 //open door when we get to the bottom
                 if(CarInfo.Height == targetHeight)
