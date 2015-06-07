@@ -262,8 +262,7 @@ static void taskCarMotion(void *pvParameters)
         int doorCount = 0;
         char str1 [3];
         char str2 [3];
-        static const char mFeet[] = " Feet ";
-        static const char mMS[] = " ft/s\r\n\0\0";
+
         int value = CarInfo.Height;
         int value2 = CarInfo.CurrentVelocity;
         
@@ -511,6 +510,46 @@ static void taskCarMotion(void *pvParameters)
                         }
                         else if(CarInfo.Height == targetHeight)
                         {
+                            //print car arrived at level message
+                            if(CarInfo.Height == 500) //arrived at P1
+                            {
+                                for(length = 0; mFloorP1[length] != 0; length++)//strlen()
+                                {
+                                    Message2.ucMessage[length] = mFloorP1[length];
+                                }
+                                Message2.ucMessage[length] = 0;
+
+                                if( xQueueSendToBack(
+                                    xUARTQueue, //QueueHandle_t xQueue,
+                                    &Message2, //const void * pvItemToQueue,
+                                    0 //TickType_t xTicksToWait
+                                    ) != pdPASS )
+                                {
+                                //task was not able to be created after the xTicksToWait
+                                //a = 0;
+                                }
+                            }
+                            else if(CarInfo.Height == 510)
+                            {
+                                //arrived at P2
+                                for(length = 0; mFloorP2[length] != 0; length++)//strlen()
+                                {
+                                    Message2.ucMessage[length] = mFloorP2[length];
+                                }
+                                Message2.ucMessage[length] = 0;
+ 
+                                if( xQueueSendToBack(
+                                    xUARTQueue, //QueueHandle_t xQueue,
+                                    &Message2, //const void * pvItemToQueue,
+                                    0 //TickType_t xTicksToWait
+                                    ) != pdPASS )
+                                {
+                                //task was not able to be created after the xTicksToWait
+                                //a = 0;
+                                }
+                            }
+                            
+                            
                             SpeedUpSlowDown = 0;
                             CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
                             if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
@@ -546,6 +585,47 @@ static void taskCarMotion(void *pvParameters)
                         }
                         else if(CarInfo.Height == targetHeight)
                         {
+                            //print car arrived at level message
+                            if(CarInfo.Height == 0) //arrived at P1
+                            {
+                                for(length = 0; mFloorGD[length] != 0; length++)//strlen()
+                                {
+                                    Message2.ucMessage[length] = mFloorGD[length];
+                                }
+                                Message2.ucMessage[length] = 0;
+
+                                if( xQueueSendToBack(
+                                    xUARTQueue, //QueueHandle_t xQueue,
+                                    &Message2, //const void * pvItemToQueue,
+                                    0 //TickType_t xTicksToWait
+                                    ) != pdPASS )
+                                {
+                                //task was not able to be created after the xTicksToWait
+                                //a = 0;
+                                }
+                            }
+                            else if(CarInfo.Height == 500)
+                            {
+                                //arrived at P2
+                                for(length = 0; mFloorP1[length] != 0; length++)//strlen()
+                                {
+                                    Message2.ucMessage[length] = mFloorP1[length];
+                                }
+                                Message2.ucMessage[length] = 0;
+ 
+                                if( xQueueSendToBack(
+                                    xUARTQueue, //QueueHandle_t xQueue,
+                                    &Message2, //const void * pvItemToQueue,
+                                    0 //TickType_t xTicksToWait
+                                    ) != pdPASS )
+                                {
+                                //task was not able to be created after the xTicksToWait
+                                //a = 0;
+                                }
+                            }
+                            
+                            
+                            
                             CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
                             if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
                             {
