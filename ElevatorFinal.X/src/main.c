@@ -147,4 +147,5 @@ static void prvSetupHardware(void)
     myCLI_init();
 
     carControlInit();
+    motorControlInit();
 }

@@ -88,12 +88,14 @@ TaskHandle_t xButtonTask;
 static const xTaskParameter_t xTask0Parameters = {0 /* Toggle LED1 */, (200 / portTICK_RATE_MS) /* At 800ms. */};
 static const xTaskParameter_t xTask1Parameters = {1 /* Toggle LED2 */, (200 / portTICK_RATE_MS) /* At 400ms. */};
 static const xTaskParameter_t xTask2Parameters = {2 /* Toggle LED3 */, (200 / portTICK_RATE_MS) /* At 150ms. */};
+static const xTaskParameter_t xTask4Parameters = {4 /* Toggle LED5 */, (0) /* At 0ms. */};
 
 static const int UARTTXTASKPRIORITY = 2;
 static const int UARTRXTASKPRIORITY = 3;
 static const int LEDTASKPRIORITY = 1;
 static const int BUTTONTASKPRIORITY = 4;
 static const int CARCONTROLPRIORITY = 2;
+static const int MOTORCONTROLPRIORITY = 2;
 static const int CARMOTIONPRIORITY = 2;
 
 

@@ -357,6 +357,8 @@ static void taskCarMotion(void *pvParameters)
         {
             if(CarInfo.Direction == UP)
             {
+                setLED(6,1);
+
                 if(CarInfo.Height > targetHeight)
                 {
                     //we overshot!
@@ -378,6 +380,7 @@ static void taskCarMotion(void *pvParameters)
                         CarInfo.TargetFloor = NO_FLOOR;
                     }
                     CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                    setLED(6,0);
 
                     //go through open door process
 
@@ -387,6 +390,8 @@ static void taskCarMotion(void *pvParameters)
             }
             else if(CarInfo.Direction == DOWN)
             {
+                setLED(5,1);
+
                 if(CarInfo.Height < targetHeight)
                 {
                     //we overshot!
@@ -408,6 +413,7 @@ static void taskCarMotion(void *pvParameters)
                         CarInfo.TargetFloor = NO_FLOOR;
                     }
                     CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                    setLED(5,0);
 
                     //go through open door process
 

@@ -11,7 +11,7 @@ uint8_t initalizeLedDriver(void)
 {
     int i;
     mPORTDClearBits(0xFF);
-    mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
+    mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2 );
 
     //initalize the button press mutex
     for(i = 0; i <= 2; i++)
@@ -48,7 +48,7 @@ uint8_t initalizeLedDriver(void)
 {
     int i;
     mPORTAClearBits(0xFF);
-    mPORTASetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
+    mPORTASetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2 | BIT_4 | BIT_5 | BIT_6);
 
     //initalize the button press mutex
     for(i = 0; i <= 2; i++)
