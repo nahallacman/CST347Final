@@ -249,6 +249,7 @@ static void taskCarControl(void *pvParameters)
 
 static void taskCarMotion(void *pvParameters)
 {
+    int JustStopped = 0; // flag for printing stopped when we stop moving.
     //---- variables for update every 500ms -----
     //all of this stuff is for the message every 500ms
         struct UARTMessage *pxRxedMessage;
@@ -280,11 +281,13 @@ static void taskCarMotion(void *pvParameters)
              switch(doorState)
              {
                 case 0:
-                    toggleLED(2);
+                    //toggleLED(2);
+                    setLED(2, 0);
                     doorState = 1;
                     break;
                case 1:
-                    toggleLED(1);
+                    //toggleLED(1);
+                    setLED(1, 0);
                     doorState = 2;
                     break;
                case 2:
@@ -306,7 +309,7 @@ static void taskCarMotion(void *pvParameters)
                     break;
             }
         }
-        //dor close sequence
+        //door close sequence
         else
         {
             switch(doorState)
@@ -319,16 +322,19 @@ static void taskCarMotion(void *pvParameters)
                     {
                         //Reset count for next pass, go to next state
                         doorCount = 0;
-                        toggleLED(0);
+                        //toggleLED(0);
+                        setLED(0, 1);
                         doorState = 4;
                     }
                     break;
                case 4:
-                    toggleLED(1);
+                    //toggleLED(1);
+                    setLED(1, 1);
                     doorState = 5;
                     break;
                case 5:
-                    toggleLED(2);
+                    //toggleLED(2);
+                    setLED(2, 1);
                     doorState = 0;
                     break;
             }
@@ -352,7 +358,15 @@ static void taskCarMotion(void *pvParameters)
                 }
                 break;
             case EMERGENCY_START: // emergency state can not be stopped!
-                openDoor = 0;
+                targetHeight = 0;
+                if(CarInfo.Height > 1)
+                {
+                    if(doorState > 0 && doorState < 3) // if the door isn't closed begin closing it
+                    {
+                        doorState = 3;
+                        openDoor = 0;
+                    }
+                }
                 
                 //else if traveling up, deaccelerate to 0 and reverse
                 if(CarInfo.CurrentVelocity > 0 && CarInfo.Direction == UP )
@@ -649,6 +663,29 @@ static void taskCarMotion(void *pvParameters)
             //happens once every half second 
             if(SpeedUpSlowDown == 1) //accelerating positively
             {
+                if(CarInfo.CurrentVelocity == 0)
+                {
+                    //print moving message
+                    for(length = 0; mMoving[length] != 0; length++)//strlen()
+                    {
+                        Message2.ucMessage[length] = mMoving[length];
+                    }
+                    Message2.ucMessage[length] = 0;
+
+                    if( xQueueSendToBack(
+                        xUARTQueue, //QueueHandle_t xQueue,
+                        &Message2, //const void * pvItemToQueue,
+                        0 //TickType_t xTicksToWait
+                        ) != pdPASS )
+                    {
+                    //task was not able to be created after the xTicksToWait
+                    //a = 0;
+                    }
+                }
+                else
+                { //we started moving, so reset the stopped flag so it will print the next time we stop
+                    JustStopped = 1; 
+                }
                 if(CarInfo.CurrentVelocity < CarInfo.MaxVelocty)
                 {
                     CarInfo.CurrentVelocity += (CarInfo.MaxAcceleration / 2); // 1/2 acceleration since 500ms period
@@ -674,6 +711,31 @@ static void taskCarMotion(void *pvParameters)
         else // the door is open so make sure we don't have any velocity!
         {
             CarInfo.CurrentVelocity = 0;
+        }
+        
+        if(CarInfo.CurrentVelocity == 0)
+        {
+            if(JustStopped == 1)
+            {
+                //print stopped message
+                for(length = 0; mStopped[length] != 0; length++)//strlen()
+                {
+                    Message2.ucMessage[length] = mStopped[length];
+                }
+                Message2.ucMessage[length] = 0;
+
+                if( xQueueSendToBack(
+                    xUARTQueue, //QueueHandle_t xQueue,
+                    &Message2, //const void * pvItemToQueue,
+                    0 //TickType_t xTicksToWait
+                    ) != pdPASS )
+                {
+                //task was not able to be created after the xTicksToWait
+                //a = 0;
+                }
+                //reset JustStopped so we only print once.
+                JustStopped = 0;
+            }
         }
         
         

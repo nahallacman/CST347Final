@@ -110,6 +110,8 @@ int DistanceToAccelerateToStop();
         static const char mFloorGD[] = "Floor GD\r\n\0\0";
         static const char mFloorP1[] = "Floor P1\r\n\0\0";
         static const char mFloorP2[] = "Floor P2\r\n\0\0";
+        static const char mStopped[] = "Stopped\r\n\0\0";
+        static const char mMoving[] = "Moving\r\n\0\0";
 
 #ifdef	__cplusplus
 }
