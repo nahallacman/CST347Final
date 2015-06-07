@@ -30,7 +30,7 @@ uint8_t toggleLED(uint8_t ledNum);
 //SemaphoreHandle_t LED0mutex;
 //SemaphoreHandle_t LED1mutex;
 //SemaphoreHandle_t LED2mutex;
-SemaphoreHandle_t LEDmutex[3];
+SemaphoreHandle_t LEDmutex[6];
 
 #ifdef	__cplusplus
 }

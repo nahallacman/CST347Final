@@ -97,6 +97,9 @@ struct CARCONTROLINFO
 //    enum DIRECTION Direction;
 //};
 
+static int doorState = 0;
+static int openDoor = 0;
+
 struct CARCONTROLINFO CarInfo;
 
 int DistanceToAccelerateToStop();

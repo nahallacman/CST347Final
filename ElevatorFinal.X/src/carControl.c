@@ -146,15 +146,19 @@ static void taskCarControl(void *pvParameters)
                                     //else ??
                                     break;
                                 case SW3: //SW3 ? Open Door inside car
-                                    //if elevator not moving, 
-                                    //      if door not open
-                                    //          open door
-                                    //      else do nothing
-                                    //else do nothing
+                                    if(CarInfo.CurrentVelocity == 0)
+                                    {
+                                        if(doorState == 0)
+                                            openDoor = 1;
+                                    }
                                     break;
                                 case SW4: //SW4 ? Close Door inside car
                                     //if elevator door open
-                                    //      close door
+                                    if(CarInfo.CurrentVelocity == 0)
+                                    {
+                                        if(doorState == 3)
+                                            openDoor = 0;
+                                    }
                                     //else do nothing
                                     break;
                                 default:
@@ -200,19 +204,73 @@ static void taskCarMotion(void *pvParameters)
         int length = 0;
         int length2 = 0;
         char test;
+        int doorCount = 0;
         char str1 [3];
         char str2 [3];
         static const char mFeet[] = " Feet ";
         static const char mMS[] = " ft/s\r\n\0\0";
         int value = CarInfo.Height;
         int value2 = CarInfo.CurrentVelocity;
-    
+        
     //---- end variables for update every 500ms -----
-    
+        
     int SpeedUpSlowDown = 1; //if this = 1, we are speeding up, if it equals -1 we are slowing down
     int targetHeight = 0;
     while(1)
     {
+        /*State machine for handling door open/close. To make things simpler,
+         the state machine automatically closes the door after a delay.*/
+        //Door open sequence
+        if(openDoor == 1)
+        {
+             switch(doorState)
+             {
+                case 0:
+                    toggleLED(2);
+                    doorState = 1;
+                    break;
+               case 1:
+                    toggleLED(1);
+                    doorState = 2;
+                    break;
+               case 2:
+                    toggleLED(0);
+                    doorState = 3;
+
+                    //Do not start closing unles there is no emergency
+                    //Currently doesn't work because how emergency functions.
+                    if(CarInfo.EmergencyState == NO_EMERGENCY)
+                        openDoor = 0;
+                    break;
+            }
+        }
+        //dor close sequence
+        else
+        {
+            switch(doorState)
+             {
+                case 3:
+                    //Stay open for 4 seconds for people to exit
+                    if(doorCount < 8)
+                        doorCount++;
+                    else
+                    {
+                        //Reset count for next pass, go to next state
+                        doorCount = 0;
+                        toggleLED(0);
+                        doorState = 4;
+                    }
+                    break;
+               case 4:
+                    toggleLED(1);
+                    doorState = 5;
+                    break;
+               case 5:
+                    toggleLED(2);
+                    doorState = 0;
+                    break;
+            }
+        }
         //this switch allows for the emergency state to be moved between the CarContol task and this CarMotion task
         //could make it so there is only EMERGENCY_START and default, that way stuff only happens when the emergency is actually activated
         switch(CarInfo.EmergencyState)
@@ -222,7 +280,7 @@ static void taskCarMotion(void *pvParameters)
                 //does nothing here
                 break;
             case EMERGENCY_START: // emergency state can not be stopped!
-                //if door not closed, close the door
+                openDoor = 0;
                 //else if traveling up, deaccelerate to 0 and reverse
                 if(CarInfo.CurrentVelocity > 0 && CarInfo.Direction == UP )
                 {
@@ -237,7 +295,7 @@ static void taskCarMotion(void *pvParameters)
                 //open door when we get to the bottom
                 if(CarInfo.Height == targetHeight)
                 {
-                    //open door
+                    openDoor = 1;
                     //then change state to EMERGENCY_DONE
                     CarInfo.EmergencyState = EMERGENCY_DONE;
                 }
@@ -251,6 +309,8 @@ static void taskCarMotion(void *pvParameters)
         
         //if we are moving?
         //takes a target floor, and a last floor, and moves from the last floor to the target floor
+        if(doorState == 0)
+        {
         switch(CarInfo.TargetFloor)
         {
             case GROUND: // car is always traveling down
@@ -291,7 +351,7 @@ static void taskCarMotion(void *pvParameters)
                         }
                         break;
                     case P1:
-                        //error, last floor and target floor are equal
+                        //error
                         break;
                     case P2:
                         //going down // special case of only moving 1 floor
@@ -357,8 +417,6 @@ static void taskCarMotion(void *pvParameters)
         {
             if(CarInfo.Direction == UP)
             {
-                setLED(6,1);
-
                 if(CarInfo.Height > targetHeight)
                 {
                     //we overshot!
@@ -380,9 +438,10 @@ static void taskCarMotion(void *pvParameters)
                         CarInfo.TargetFloor = NO_FLOOR;
                     }
                     CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                    setLED(6,0);
 
                     //go through open door process
+                    openDoor = 1;
+                    
 
                     //should wait until door closes before setting TargetFloor
                     //probably requires a state machine here
@@ -390,8 +449,6 @@ static void taskCarMotion(void *pvParameters)
             }
             else if(CarInfo.Direction == DOWN)
             {
-                setLED(5,1);
-
                 if(CarInfo.Height < targetHeight)
                 {
                     //we overshot!
@@ -413,12 +470,9 @@ static void taskCarMotion(void *pvParameters)
                         CarInfo.TargetFloor = NO_FLOOR;
                     }
                     CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                    setLED(5,0);
 
                     //go through open door process
-
-                    //should wait until door closes before setting TargetFloor
-                    //probably requires a state machine here
+                    openDoor = 1;
                 }
             }
         }
@@ -448,7 +502,7 @@ static void taskCarMotion(void *pvParameters)
             //no acceleration since we are not moving!
             CarInfo.CurrentVelocity = 0;
         }
-
+        }
         value = CarInfo.Height;
         value2 = CarInfo.CurrentVelocity;
         //SEND UPDATE DISTANCE MESSAGE HERE
