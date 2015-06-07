@@ -39,7 +39,7 @@ static void taskCarControl(void *pvParameters)
                     if(localButton == ACCELERATION)
                     {
                         //may need to confirm limits here
-                        if(pxRxedMessage->Acceleration >= 1 && pxRxedMessage->Acceleration <= 20 )
+                        if(pxRxedMessage->Acceleration >= 1 && pxRxedMessage->Acceleration <= 8 )
                         {
                             CarInfo.MaxAcceleration = pxRxedMessage->Acceleration;
                         }
@@ -47,7 +47,7 @@ static void taskCarControl(void *pvParameters)
                     else if(localButton == VELOCITY)
                     {
                         //may need to confirm limits here
-                        if(pxRxedMessage->Velocity >= 1 && pxRxedMessage->Velocity <= 8)
+                        if(pxRxedMessage->Velocity >= 1 && pxRxedMessage->Velocity <= 20)
                         {
                             CarInfo.MaxVelocty = pxRxedMessage->Velocity;
                         }
