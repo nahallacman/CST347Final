@@ -60,8 +60,15 @@ static void taskCarControl(void *pvParameters)
                             switch(localButton)
                             {
                                 case Q: // Keyboard ?q? ? GD Floor Call outside car
-                                    //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == GROUND)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR) //if target floor not set
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = GROUND;  
                                     }
@@ -71,8 +78,15 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case W://Keyboard ?w? ? P1Call DN outside car
-                                    //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == P1)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR) //if target floor not set
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = P1;  
                                     }
@@ -82,8 +96,15 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case E://Keyboard ?e? ? P1Call UP outside car
-                                    //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == P1)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR) //if target floor not set
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = P1;  
                                     }
@@ -93,8 +114,15 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case R: //Keyboard ?r? ? P2 Call outside car
-                                    //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == P2)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR) //if target floor not set
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = P2;  
                                     }
@@ -104,8 +132,15 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case T: //Keyboard ?t? ? GD Call button inside car
-                                    //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == GROUND)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR)//if target floor not set
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = GROUND;  
                                     }
@@ -124,7 +159,15 @@ static void taskCarControl(void *pvParameters)
                                     break;
                                 case SW1: //SW1 ? P2 Call button inside car
                                     //if target floor not set
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == P2)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR)
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = P2;  
                                     }
@@ -134,7 +177,15 @@ static void taskCarControl(void *pvParameters)
                                     }
                                     break;
                                 case SW2: //SW2 ? P1 Call button inside car
-                                    if(CarInfo.TargetFloor == NO_FLOOR)
+                                    if(CarInfo.LastFloor == P1)
+                                    {
+                                        //open the door
+                                        if(doorState == 0)
+                                        {
+                                            openDoor = 1;
+                                        }
+                                    }
+                                    else if(CarInfo.TargetFloor == NO_FLOOR)
                                     {   //set target floor to ground floor
                                         CarInfo.TargetFloor = P1;  
                                     }
