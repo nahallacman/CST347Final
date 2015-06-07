@@ -37,6 +37,7 @@ enum ButtonPressed {
 
 enum EMERGENCYSTATE {
     NO_EMERGENCY,
+    EMERGENCY_STOP,
     EMERGENCY_START,
     EMERGENCY_DONE
 };

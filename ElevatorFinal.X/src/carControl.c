@@ -217,6 +217,10 @@ static void taskCarControl(void *pvParameters)
                                     delete_me = 0;
                             }
                             break;
+                        case EMERGENCY_STOP:
+                            //the car has to slow down since it is moving upwards.
+                            //nothing actually happens here.
+                            break;
                         case EMERGENCY_START:  // if there is an emergency, ignore all normal key presses
                             // emergency state can not be stopped!
                             //now try to move the car down
@@ -291,7 +295,7 @@ static void taskCarMotion(void *pvParameters)
 
                     //Do not start closing unless there is no emergency
                     //Currently doesn't work because how emergency functions.
-                    if(CarInfo.EmergencyState == EMERGENCY_DONE)
+                    if(CarInfo.EmergencyState == NO_EMERGENCY)
                     {
                         doorState = 3;
                         openDoor = 0;
@@ -338,19 +342,30 @@ static void taskCarMotion(void *pvParameters)
                 //wait for emergency input
                 //does nothing here
                 break;
+            case EMERGENCY_STOP:
+                if(CarInfo.CurrentVelocity == 0)
+                {
+                    CarInfo.EmergencyState = EMERGENCY_START; // restart the emergency after we have stopped moving.
+                    CarInfo.Direction = DOWN;
+                    CarInfo.TargetFloor = GROUND;
+                    CarInfo.NextFloor = NO_FLOOR; // make sure no floors can be queued up while we are going to ground.
+                    SpeedUpSlowDown = 1;
+                }
+                break;
             case EMERGENCY_START: // emergency state can not be stopped!
                 openDoor = 0;
-                CarInfo.TargetFloor = GROUND;
-                CarInfo.NextFloor = NO_FLOOR; // make sure no floors can be queued up while we are going to ground.
+                
                 //else if traveling up, deaccelerate to 0 and reverse
                 if(CarInfo.CurrentVelocity > 0 && CarInfo.Direction == UP )
                 {
-                    SpeedUpSlowDown = -1;
+                    CarInfo.EmergencyState = EMERGENCY_STOP;
+                    break;
                 }
                 //when we stop moving, go the other direction as fast as possible
-                else if(CarInfo.CurrentVelocity == 0)
+                else
                 {
-                    //CarInfo.TargetFloor = GROUND;
+                    CarInfo.TargetFloor = GROUND;
+                    CarInfo.NextFloor = NO_FLOOR; // make sure no floors can be queued up while we are going to ground.
                     SpeedUpSlowDown = 1;
                 }
                 //open door when we get to the bottom
@@ -474,70 +489,78 @@ static void taskCarMotion(void *pvParameters)
 
             }
 
-            if(CarInfo.Direction != NO_DIRECTION) // no height comparisons if we are not moving
+            if(CarInfo.EmergencyState == EMERGENCY_STOP)
             {
-                if(CarInfo.Direction == UP)
+                SpeedUpSlowDown = -1;
+                
+            }
+            else
+            {
+                if(CarInfo.Direction != NO_DIRECTION) // no height comparisons if we are not moving
                 {
-                    setLED(6,1);
-                    if(CarInfo.Height > targetHeight)
+                    if(CarInfo.Direction == UP)
                     {
-                        //we overshot!
-                        //make sure we go back to targetHeight
-                        SpeedUpSlowDown = -1;
-                        CarInfo.Height -= 1;
-                        //CarInfo.CurrentVelocity = 1;
+                        setLED(6,1);
+                        if(CarInfo.Height > targetHeight)
+                        {
+                            //we overshot!
+                            //make sure we go back to targetHeight
+                            SpeedUpSlowDown = -1;
+                            CarInfo.Height -= 1;
+                            //CarInfo.CurrentVelocity = 1;
+                        }
+                        else if(CarInfo.Height == targetHeight)
+                        {
+                            SpeedUpSlowDown = 0;
+                            CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                            if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                            {
+                                CarInfo.TargetFloor = CarInfo.NextFloor;
+                            }
+                            else
+                            {
+                                CarInfo.TargetFloor = NO_FLOOR;
+                            }
+                            CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                            setLED(6,0);
+
+                            //go through open door process
+                            openDoor = 1;
+
+
+                            //should wait until door closes before setting TargetFloor
+                            //probably requires a state machine here
+                        }
                     }
-                    else if(CarInfo.Height == targetHeight)
+                    else if(CarInfo.Direction == DOWN)
                     {
-                        SpeedUpSlowDown = 0;
-                        CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-                        if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                        setLED(5,1);
+                        if(CarInfo.Height < targetHeight)
                         {
-                            CarInfo.TargetFloor = CarInfo.NextFloor;
+                            //we overshot!
+                            //make sure we go back to targetHeight
+                            //make sure we go back to targetHeight
+                            SpeedUpSlowDown = -1;
+                            CarInfo.Height += 1;
+                            //CarInfo.CurrentVelocity = 1;
                         }
-                        else
+                        else if(CarInfo.Height == targetHeight)
                         {
-                            CarInfo.TargetFloor = NO_FLOOR;
+                            CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
+                            if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
+                            {
+                                CarInfo.TargetFloor = CarInfo.NextFloor;
+                            }
+                            else
+                            {
+                                CarInfo.TargetFloor = NO_FLOOR;
+                            }
+                            CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
+                            setLED(5,0);
+
+                            //go through open door process
+                            openDoor = 1;
                         }
-                        CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                        setLED(6,0);
-
-                        //go through open door process
-                        openDoor = 1;
-
-
-                        //should wait until door closes before setting TargetFloor
-                        //probably requires a state machine here
-                    }
-                }
-                else if(CarInfo.Direction == DOWN)
-                {
-                    setLED(5,1);
-                    if(CarInfo.Height < targetHeight)
-                    {
-                        //we overshot!
-                        //make sure we go back to targetHeight
-                        //make sure we go back to targetHeight
-                        SpeedUpSlowDown = -1;
-                        CarInfo.Height += 1;
-                        //CarInfo.CurrentVelocity = 1;
-                    }
-                    else if(CarInfo.Height == targetHeight)
-                    {
-                        CarInfo.LastFloor = CarInfo.TargetFloor; //set last floor to target floor
-                        if(CarInfo.NextFloor != NO_FLOOR) //set target floor to next floor
-                        {
-                            CarInfo.TargetFloor = CarInfo.NextFloor;
-                        }
-                        else
-                        {
-                            CarInfo.TargetFloor = NO_FLOOR;
-                        }
-                        CarInfo.NextFloor = NO_FLOOR; //set next floor to NO_FLOOR
-                        setLED(5,0);
-
-                        //go through open door process
-                        openDoor = 1;
                     }
                 }
             }
@@ -572,6 +595,10 @@ static void taskCarMotion(void *pvParameters)
         {
             CarInfo.CurrentVelocity = 0;
         }
+        
+        
+        
+        
         value = CarInfo.Height;
         value2 = CarInfo.CurrentVelocity;
         //SEND UPDATE DISTANCE MESSAGE HERE
