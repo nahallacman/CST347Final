@@ -4,12 +4,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/carControl.h</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/leddrv.c</file>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/carControl.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/uartdrv.c</file>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/myTasks.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/motorControl.c</file>
             <file>file:/D:/School/CST347Final/FreeRTOS/Source/tasks.c</file>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/myCLICMD.c</file>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/main.c</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/buttondrv.h</file>
+            <file>file:/D:/School/CST347Final/ElevatorFinal.X/src/buttondrv.c</file>
             <file>file:/D:/School/CST347Final/ElevatorFinal.X/include/myTasks.h</file>
+            <file>file:/D:/School/CST347Final/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S</file>
         </group>
     </open-files>
 </project-private>
