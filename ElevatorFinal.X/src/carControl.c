@@ -273,72 +273,7 @@ static void taskCarMotion(void *pvParameters)
     int targetHeight = 0;
     while(1)
     {
-        /*State machine for handling door open/close. To make things simpler,
-         the state machine automatically closes the door after a delay.*/
-        //Door open sequence
-        if(openDoor == 1)
-        {
-             switch(doorState)
-             {
-                case 0:
-                    //toggleLED(2);
-                    setLED(2, 0);
-                    doorState = 1;
-                    break;
-               case 1:
-                    //toggleLED(1);
-                    setLED(1, 0);
-                    doorState = 2;
-                    break;
-               case 2:
-                    setLED(0, 0);
-                    //toggleLED(0);
-                    
 
-                    //Do not start closing unless there is no emergency
-                    //Currently doesn't work because how emergency functions.
-                    if(CarInfo.EmergencyState == NO_EMERGENCY)
-                    {
-                        doorState = 3;
-                        openDoor = 0;
-                    }
-                    else
-                    {
-                        doorState = 2;
-                    }
-                    break;
-            }
-        }
-        //door close sequence
-        else
-        {
-            switch(doorState)
-             {
-                case 3:
-                    //Stay open for 4 seconds for people to exit
-                    if(doorCount < 8)
-                        doorCount++;
-                    else
-                    {
-                        //Reset count for next pass, go to next state
-                        doorCount = 0;
-                        //toggleLED(0);
-                        setLED(0, 1);
-                        doorState = 4;
-                    }
-                    break;
-               case 4:
-                    //toggleLED(1);
-                    setLED(1, 1);
-                    doorState = 5;
-                    break;
-               case 5:
-                    //toggleLED(2);
-                    setLED(2, 1);
-                    doorState = 0;
-                    break;
-            }
-        }
         //this switch allows for the emergency state to be moved between the CarContol task and this CarMotion task
         //could make it so there is only EMERGENCY_START and default, that way stuff only happens when the emergency is actually activated
         switch(CarInfo.EmergencyState)
@@ -658,6 +593,8 @@ static void taskCarMotion(void *pvParameters)
                     }
                 }
             }
+            
+            
 
             //increase current velocity until max
             //happens once every half second 
@@ -738,7 +675,72 @@ static void taskCarMotion(void *pvParameters)
             }
         }
         
-        
+                /*State machine for handling door open/close. To make things simpler,
+         the state machine automatically closes the door after a delay.*/
+        //Door open sequence
+        if(openDoor == 1)
+        {
+             switch(doorState)
+             {
+                case 0:
+                    //toggleLED(2);
+                    setLED(2, 0);
+                    doorState = 1;
+                    break;
+               case 1:
+                    //toggleLED(1);
+                    setLED(1, 0);
+                    doorState = 2;
+                    break;
+               case 2:
+                    setLED(0, 0);
+                    //toggleLED(0);
+                    
+
+                    //Do not start closing unless there is no emergency
+                    //Currently doesn't work because how emergency functions.
+                    if(CarInfo.EmergencyState == NO_EMERGENCY)
+                    {
+                        doorState = 3;
+                        openDoor = 0;
+                    }
+                    else
+                    {
+                        doorState = 2;
+                    }
+                    break;
+            }
+        }
+        //door close sequence
+        else
+        {
+            switch(doorState)
+             {
+                case 3:
+                    //Stay open for 4 seconds for people to exit
+                    if(doorCount < 8)
+                        doorCount++;
+                    else
+                    {
+                        //Reset count for next pass, go to next state
+                        doorCount = 0;
+                        //toggleLED(0);
+                        setLED(0, 1);
+                        doorState = 4;
+                    }
+                    break;
+               case 4:
+                    //toggleLED(1);
+                    setLED(1, 1);
+                    doorState = 5;
+                    break;
+               case 5:
+                    //toggleLED(2);
+                    setLED(2, 1);
+                    doorState = 0;
+                    break;
+            }
+        }
         
         
         value = CarInfo.Height;
