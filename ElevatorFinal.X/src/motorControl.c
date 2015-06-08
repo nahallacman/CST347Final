@@ -29,17 +29,19 @@ static void taskMotorControl(void *pvParameters)
             if ( previousVelocity != CarInfo.CurrentVelocity )     //Elevator moving
             {
                 //Blink according to 1Hz per 10 ft/s
-                toggleLED(pxTaskParameter->usLEDNumber);
+                //May not appear to blink before reaching max velocity
+                //Due to slow blink period of slower velocities
                 previousVelocity = CarInfo.CurrentVelocity;
                 blink_rate = (10 / (float)previousVelocity);
                 vTaskDelay( blink_rate * 1000 );
             }
             else if ( previousVelocity == CarInfo.MaxVelocty )          //Elevator at max velocity
-            {
-                toggleLED(pxTaskParameter->usLEDNumber);
-                //Maximum blink (may just appear solid)
+            {                
+                //Maximum blink (500 ms)
                 vTaskDelay( 500 / portTICK_RATE_MS );
             }
+
+            toggleLED(pxTaskParameter->usLEDNumber);
         }
     }
 }
